@@ -4,18 +4,18 @@ function hashPassword(password) {
 
 function checkPassword() {
     var password = document.getElementById('password').value;
-    let correctHash = ['TGlu', 'Q0hU'];
+    let correctHash = ['Q0hU'];
 
     for (i = 0; i < correctHash.length; i++) {
         if (hashPassword(password) === correctHash[i]) {
             document.getElementById('login-form').style.display = 'none';
             document.getElementById('pctpwd').style.display = 'block';
             localStorage.setItem('authenticated', 'true');
-            alert('子彈將於6/6晚上封印此網頁, 謝謝妳曾經幫助他.')
+            alert('子彈已經封印此網頁, 你現在是以root的身份查看此頁面.')
             return;
         }
     }
-    alert('你/妳無權瀏覽此頁面');
+    alert('子彈已經封印此網頁, 謝謝你/妳曾幫助他');
 }
 
 window.onload = function () {
