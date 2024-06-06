@@ -4,7 +4,7 @@ function hashPassword(password) {
 
 function checkPassword() {
     var password = document.getElementById('password').value;
-    let correctHash = ['Q0hU'];
+    let correctHash = ['QeW9zaGlubzM50hU'];
 
     for (i = 0; i < correctHash.length; i++) {
         if (hashPassword(password) === correctHash[i]) {
