@@ -11,7 +11,7 @@ function checkPassword() {
             document.getElementById('login-form').style.display = 'none';
             document.getElementById('pctpwd').style.display = 'block';
             localStorage.setItem('authenticated', 'true');
-            alert('子彈已經封印此網頁, 你現在是以root的身份查看此頁面.')
+            alert('子彈已經封印此網頁, 你現在是以祕密的身份查看此頁面.')
             return;
         }
     }
