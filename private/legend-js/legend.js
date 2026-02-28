@@ -39,12 +39,12 @@ async function requestProtectedDownload() {
   if (inputHash === CORRECT_PASSWORD_HASH) {
     // 密碼正確 → 開始下載
     const link = document.createElement("a");
-    link.href = "./resource/boss1.6-holo(beta).7z"; // ← 改成你要下載的檔案路徑或名稱
+    link.href = "./resource/boss1.6-ALEP.7z"; // ← 改成你要下載的檔案路徑或名稱
     // 範例：
     // link.href = "files/機密資料.zip";
     // link.href = "https://example.com/報告.pdf";
 
-    link.download = "boss1.6-holo(beta).7z"; // ← 建議設定，否則有些瀏覽器會用原始檔名
+    link.download = "boss1.6-ALEP.7z"; // ← 建議設定，否則有些瀏覽器會用原始檔名
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
