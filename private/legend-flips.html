@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Legend Rules</title>
+    <script src="./legend-js/legend.js"></script>
+    <style>
+      input {
+        border: 0;
+        background-color: #e08feb;
+        color: #fff;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+
+      input:hover {
+        color: #e08feb;
+        background-color: #fff;
+        border: 2px #e08feb solid;
+      }
+    </style>
+  </head>
+  <body bgcolor="gray" oncontextmenu="window.event.returnValue = false">
+    <center>
+      <h2>Legend 1.6 翻牌活動</h2>
+      <hr color="black" size="5" />
+      <img src="./cs16_qq/kdg.jpg" width="10%" /><img
+        src="./cs16_qq/n3.jpg"
+        width="10%"
+      /><img src="./cs16_qq/HT.png" width="10%" /><img
+        src="./cs16_qq/ng.png"
+        width="10%"
+      /><img src="./cs16_qq/si.png" width="10%" />
+      <br />
+      <h2>
+        <font color="red"
+          >使用手機查看的玩家, 請將表格縮小以確認所有資訊<br />建議使用電腦遊玩,
+          手機可能會加載不完全</font
+        >
+      </h2>
+      <h4>1.6 魔王服 IP:s11-1.yxsjmc.cn:27015</h4>
+      <hr color="black" size="5" />
+      <h3>活動時間:即日起 - (預定)5/7 4:00</h3>
+      <table
+        align="center"
+        border="1"
+        width="640"
+        height="20"
+        cellpadding="5"
+        style="color: aquamarine; border: thick double rgb(238, 150, 219)"
+      >
+        <thead>
+          <tr>
+            <th colspan="2" style="color: black; font-size: 28px">
+              次數獲得方式
+            </th>
+          </tr>
+        </thead>
+        <tbody align="center">
+          <tr>
+            <td colspan="2">遊玩</td>
+          </tr>
+          <tr>
+            <td colspan="2">簽到</td>
+          </tr>
+          <tr>
+            <td colspan="2">傷害</td>
+          </tr>
+          <tr>
+            <td colspan="2">擊殺魔王</td>
+          </tr>
+        </tbody>
+      </table>
+      <hr color="black" size="5" />
+      <table
+        align="center"
+        border="1"
+        width="640"
+        height="20"
+        cellpadding="5"
+        style="color: aquamarine; border: thick double rgb(238, 150, 219)"
+      >
+        <thead>
+          <tr>
+            <th colspan="2" style="color: black; font-size: 28px">遊戲說明</th>
+          </tr>
+        </thead>
+        <tbody align="center">
+          <tr>
+            <td colspan="2">
+              遊玩一定時間會累積翻牌次數, 可用於翻牌機會, 翻到相同號碼即可消除,
+              如果不同則變回?並繼續翻牌, 直到牌面完全消除則記一次完局
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr color="black" size="5" />
+
+      <h2>📇 模擬翻牌配對遊戲(變態版)</h2>
+      <p>
+        規則：點擊卡片顯示號碼，配對相同號碼即可消除。若不同，卡片會自動翻回。目標：消除所有卡片！
+      </p>
+
+      <!-- 遊戲狀態顯示區（置中） -->
+      <div style="display: flex; justify-content: center; margin-bottom: 8px">
+        <div id="gameStatus" style="font-weight: bold">狀態：遊戲進行中</div>
+      </div>
+
+      <!-- 嘗試次數與翻牌次數並排顯示 -->
+      <div
+        style="
+          display: flex;
+          justify-content: center;
+          gap: 30px;
+          margin-bottom: 12px;
+        "
+      >
+        <div id="moveCount">嘗試次數：0</div>
+        <div id="flipCount">翻牌次數：0</div>
+      </div>
+
+      <!-- 棋盤容器：置中 -->
+      <div style="display: flex; justify-content: center; margin-bottom: 20px">
+        <div
+          id="board"
+          style="
+            display: grid;
+            grid-template-columns: repeat(4, 80px);
+            gap: 8px;
+          "
+        ></div>
+      </div>
+
+      <!-- 按鈕置中 -->
+      <div style="display: flex; justify-content: center">
+        <button id="resetBtn">🔄 重新洗牌</button>
+      </div>
+
+      <script src="legend-js/match-game.js"></script>
+    </center>
+    <div align="right">
+      <font size="2"
+        >original legend by kdghrh, custom updated by CollapseHT</font
+      >
+    </div>
+  </body>
+</html>
