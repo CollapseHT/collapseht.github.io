@@ -117,9 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const pawButton = document.getElementById("clickablePaw");
   if (pawButton) {
     pawButton.addEventListener("click", () => {
-      const audio = new Audio(
-        "https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3",
-      );
+      const audio = new Audio("images/secret.mp3");
       audio.volume = 0.3;
       audio.play().catch((e) => console.log("音效播放失敗：", e));
       const originalHTML = pawButton.innerHTML;
@@ -127,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
         '<i class="fa-solid fa-heart"></i> もぐもぐ！ <i class="fa-solid fa-heart"></i>';
       setTimeout(() => {
         pawButton.innerHTML = originalHTML;
-      }, 800);
+      }, 3000);
     });
   }
 });
