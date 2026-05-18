@@ -172,3 +172,99 @@ function updateEnhancedClock() {
 }
 updateEnhancedClock();
 setInterval(updateEnhancedClock, 1000);
+
+// ===== 今日運勢（基於日期固定）=====
+function getDailyFortune() {
+  const today = new Date();
+  const seed =
+    today.getFullYear() * 10000 +
+    (today.getMonth() + 1) * 100 +
+    today.getDate();
+  // 簡單的偽隨機函數
+  const rnd = (max) => {
+    const x = Math.sin(seed) * 10000 + seed;
+    const r = (x - Math.floor(x)) * max;
+    return Math.floor(r);
+  };
+
+  const levels = [
+    { name: "🌸 大吉", weight: 1 },
+    { name: "🍙 中吉", weight: 2 },
+    { name: "🐾 小吉", weight: 3 },
+    { name: "🍵 末吉", weight: 2 },
+    { name: "🌙 凶", weight: 1 },
+  ];
+  // 根據權重抽取
+  let totalWeight = levels.reduce((sum, l) => sum + l.weight, 0);
+  let rand = rnd(totalWeight);
+  let levelObj = levels[0];
+  for (let l of levels) {
+    if (rand < l.weight) {
+      levelObj = l;
+      break;
+    }
+    rand -= l.weight;
+  }
+  const level = levelObj.name;
+
+  // 對應內容庫
+  const fortunes = {
+    "🌸 大吉": {
+      text: "今天非常幸運！你的笑容會感染身邊的人。",
+      item: "飯糰 (吃到就是福氣)",
+      color: "紫色 / 金色",
+      advice: "もぐもぐ～今天適合主動出擊喔！",
+    },
+    "🍙 中吉": {
+      text: "平穩中帶點小驚喜，適合嘗試新事物。",
+      item: "貓掌小吊飾",
+      color: "粉紫色",
+      advice: "おかゆと一緒に頑張ろう～",
+    },
+    "🐾 小吉": {
+      text: "小小幸運藏在日常裡，留心觀察。",
+      item: "溫熱的茶",
+      color: "淺紫色",
+      advice: "もぐもぐ～慢慢來也沒關係的。",
+    },
+    "🍵 末吉": {
+      text: "稍有波折，但結局會是好的。",
+      item: "糖果",
+      color: "薰衣草色",
+      advice: "累了就休息一下，もぐもぐ～",
+    },
+    "🌙 凶": {
+      text: "可能遇到小挫折，轉換心情很重要。",
+      item: "軟綿綿的枕頭",
+      color: "深紫色",
+      advice: "明天會更好，今天もぐもぐ放鬆吧～",
+    },
+  };
+
+  const f = fortunes[level];
+  return {
+    level: level,
+    text: f.text,
+    item: f.item,
+    color: f.color,
+    advice: f.advice,
+  };
+}
+
+function displayFortune() {
+  const fortune = getDailyFortune();
+  const levelEl = document.getElementById("fortuneLevel");
+  const textEl = document.getElementById("fortuneText");
+  const itemEl = document.getElementById("fortuneItem");
+  const colorEl = document.getElementById("fortuneColor");
+  const adviceEl = document.getElementById("fortuneAdvice");
+
+  if (levelEl) levelEl.innerText = fortune.level;
+  if (textEl) textEl.innerText = fortune.text;
+  if (itemEl) itemEl.innerText = fortune.item;
+  if (colorEl) colorEl.innerText = fortune.color;
+  if (adviceEl) adviceEl.innerText = fortune.advice;
+}
+
+// 執行顯示運勢
+displayFortune();
