@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Legend 1.6 伺服器 ‧ 翻牌活動</title>
+  <meta name="description" content="活動規則與翻牌配對小遊戲。">
+  <meta name="theme-color" content="#0f766e">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/legend.css">
+    <script src="assets/js/match-game.js" defer></script>
+</head>
+<body>
+<header class="site-header"><div class="inner"><a class="brand" href="index.html">Legend 1.6 伺服器</a><nav class="site-nav" aria-label="Legend 頁面"><a href="index.html">資源包</a><a href="boxes.html">箱子活動</a><a href="flips.html" class="active" aria-current="page">翻牌活動</a><a href="rules.html">伺服器規則</a><a class="back" href="../index.html">← 回個人網站</a></nav></div></header>
+<main class="page">
+  <h1 class="page-title">翻牌活動</h1>
+  <p class="page-lead">活動規則與翻牌配對小遊戲。</p>
+<img class="server-logo" src="./assets/cs16_qq/kdg.webp" alt="Legend 伺服器圖片"><img class="server-logo" src="./assets/cs16_qq/n3.webp" alt="Legend 伺服器圖片"><img class="server-logo" src="./assets/cs16_qq/HT.webp" alt="Legend 伺服器圖片"><img class="server-logo" src="./assets/cs16_qq/ng.webp" alt="Legend 伺服器圖片"><img class="server-logo" src="./assets/cs16_qq/si.webp" alt="Legend 伺服器圖片">
+      <br />
+      <p class="notice">
+        使用手機查看的玩家, 請將表格縮小以確認所有資訊<br />建議使用電腦遊玩,
+          手機可能會加載不完全
+      </p>
+      <p class="server-ip">1.6 魔王服 IP:s11-1.yxsjmc.cn:27015</p>
+      <hr>
+      <h3>活動時間:即日起 - (預定)5/7 4:00</h3>
+      <table>
+        <thead>
+          <tr>
+            <th colspan="2">
+              次數獲得方式
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="2">遊玩</td>
+          </tr>
+          <tr>
+            <td colspan="2">簽到</td>
+          </tr>
+          <tr>
+            <td colspan="2">傷害</td>
+          </tr>
+          <tr>
+            <td colspan="2">擊殺魔王</td>
+          </tr>
+        </tbody>
+      </table>
+      <hr>
+      <table>
+        <thead>
+          <tr>
+            <th colspan="2">遊戲說明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="2">
+              遊玩一定時間會累積翻牌次數, 可用於翻牌機會, 翻到相同號碼即可消除,
+              如果不同則變回?並繼續翻牌, 直到牌面完全消除則記一次完局
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr>
+
+      <h2>📇 模擬翻牌配對遊戲(變態版)</h2>
+      <p>
+        規則：點擊卡片顯示號碼，配對相同號碼即可消除。若不同，卡片會自動翻回。目標：消除所有卡片！
+      </p>
+
+      <!-- 遊戲狀態顯示區（置中） -->
+      <div>
+        <div id="gameStatus">狀態：遊戲進行中</div>
+      </div>
+
+      <!-- 嘗試次數與翻牌次數並排顯示 -->
+      <div>
+        <div id="moveCount">嘗試次數：0</div>
+        <div id="flipCount">翻牌次數：0</div>
+      </div>
+
+      <!-- 棋盤容器：置中 -->
+      <div>
+        <div
+          id="board"></div>
+      </div>
+
+      <!-- 按鈕置中 -->
+      <div>
+        <button id="resetBtn">🔄 重新洗牌</button>
+      </div>
+</main>
+<footer class="site-footer">
+  <p>original legend by kdghrh, custom updated by CollapseHT</p>
+  <p><a href="../index.html">← 回到子彈の貓窩</a></p>
+</footer>
+</body>
+</html>

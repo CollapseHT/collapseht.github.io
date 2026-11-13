@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>後台 ‧ 子彈の貓窩</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#f3e6f8" />
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="admin.css" />
+    <script src="core.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        🐾 もぐもぐ後台
+        <small>子彈の貓窩 ‧ 內容管理</small>
+      </div>
+      <div class="top-actions">
+        <span class="badge" id="repoBadge" hidden></span>
+        <a class="btn ghost small" href="../index.html" target="_blank" rel="noopener">看前台</a>
+        <button class="btn ghost small" id="reloadBtn" type="button" hidden>重新載入</button>
+        <button class="btn ghost small" id="logoutBtn" type="button" hidden>登出</button>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <!-- ================= 連線設定 ================= -->
+      <section id="setupView" class="setup">
+        <div class="card">
+          <h1>內容管理後台</h1>
+          <p class="lead">
+            在這裡修改「更新歷程」、「部落格」與「放浪團」的內容。儲存後會直接 commit 到 GitHub，
+            GitHub Pages 大約 1 分鐘後更新前台。
+          </p>
+
+          <h2>連線到 GitHub</h2>
+          <p class="hint">
+            需要一組有 <strong>Contents: Read and write</strong> 權限的 Fine-grained token。
+            權杖只會存在這台裝置的 localStorage，不會寫進網站，也不會出現在網址或畫面上。
+          </p>
+
+          <div class="grid-2" style="margin-top: 14px">
+            <label>
+              <span>Repository（owner/repo）</span>
+              <input id="repoInput" value="CollapseHT/collapseht.github.io" spellcheck="false" autocomplete="off" />
+            </label>
+            <label>
+              <span>Branch</span>
+              <input id="branchInput" value="main" spellcheck="false" autocomplete="off" />
+            </label>
+          </div>
+
+          <label>
+            <span>GitHub token</span>
+            <input id="tokenInput" type="password" placeholder="github_pat_..." spellcheck="false" autocomplete="off" />
+          </label>
+
+          <div class="grid-2">
+            <label>
+              <span>權限模式</span>
+              <select id="roleInput">
+                <option value="owner">擁有者（全部內容，可發布到 main）</option>
+                <option value="editor">內容編輯（三區，建立 PR）</option>
+                <option value="group">放浪團編輯（建立 PR）</option>
+                <option value="posts">部落格編輯（建立 PR）</option>
+                <option value="updates">更新歷程編輯（建立 PR）</option>
+              </select>
+            </label>
+            <label>
+              <span>發布方式（僅擁有者）</span>
+              <select id="publishInput">
+                <option value="direct">直接提交 main</option>
+                <option value="pr">建立 Pull Request</option>
+              </select>
+            </label>
+          </div>
+          <p class="hint" id="roleHint">
+            非擁有者一律透過 Pull Request 送出，由擁有者審核合併。
+            建議在 GitHub 對 <strong>main</strong> 開啟分支保護（Require a pull request），這樣權限才是真正被限制。
+          </p>
+
+          <div class="row">
+            <button class="btn primary" id="connectBtn" type="button">驗證並載入</button>
+            <button class="btn ghost" id="localBtn" type="button" hidden>本機檔案模式</button>
+            <span class="hint" id="setupHint"></span>
+          </div>
+          <p class="error" id="setupError" hidden></p>
+        </div>
+
+        <details class="card">
+          <summary>如何取得 GitHub 權杖？（第一次設定看這裡）</summary>
+          <ol>
+            <li>登入 GitHub，點右上角頭像 → <strong>Settings</strong>。</li>
+            <li>左側最下方 <strong>Developer settings</strong> → <strong>Personal access tokens</strong> → <strong>Fine-grained tokens</strong>。</li>
+            <li>按 <strong>Generate new token</strong>，名稱填 <code>mogumogu-admin</code>，Expiration 選 90 天。</li>
+            <li>Repository access 選 <strong>Only select repositories</strong>，只勾 <code>CollapseHT/collapseht.github.io</code>。</li>
+            <li>Repository permissions → <strong>Contents</strong> 設為 <strong>Read and write</strong>（Metadata 會自動變 Read）。</li>
+            <li>如果要用「建立 Pull Request」：<strong>Pull requests</strong> 也設為 <strong>Read and write</strong>。</li>
+            <li>朋友要先被邀請成這個 repo 的 collaborator（Settings → Collaborators），才能用自己的 token 寫入。</li>
+            <li>Generate token，複製 <code>github_pat_...</code> 貼到上面的欄位。</li>
+          </ol>
+          <p class="hint" style="margin-top: 10px">
+            如果權杖外流，隨時回到 GitHub 撤銷即可；後台只會用它讀寫這個 repo 的檔案。
+          </p>
+          <p class="hint">
+            <strong>要讓「只能編輯某一區」真正有效</strong>，請到 GitHub → Settings → Rules → Rulesets（或 Branches），
+            對 <code>main</code> 開啟「Require a pull request before merging」。
+            這樣朋友就算繞過後台直接打 API，也只能建立 PR，不能直接改 main。
+          </p>
+        </details>
+
+        <div class="card">
+          <h3>本機模式是什麼？</h3>
+          <p class="hint">
+            在本機用 <code>http://localhost</code> 開啟後台時，可以選「本機檔案模式」：
+            直接讀取同資料夾的前台 HTML，改完用瀏覽器寫回檔案（或下載三個 HTML），
+            不需要 token，適合先在本機預覽、確認版面後再自行 push。
+          </p>
+          <p class="hint">
+            最快的啟動方式：在 <code>collapseht.github.io</code> 資料夾執行
+            <code>node admin/serve.mjs</code>，再開
+            <code>http://127.0.0.1:5173/admin/</code>。
+          </p>
+        </div>
+      </section>
+
+      <!-- ================= 編輯器 ================= -->
+      <section id="editorView" hidden>
+        <div class="panel-head">
+          <div>
+            <h2 style="margin: 0">內容管理</h2>
+            <p id="loadInfo" class="hint" style="margin: 2px 0 0"></p>
+          </div>
+          <span class="badge" id="modeBadge" hidden></span>
+        </div>
+
+        <nav class="tabs" role="tablist" aria-label="內容分類">
+          <button class="tab active" type="button" data-tab="updates" role="tab" aria-selected="true">
+            📝 更新歷程 <span class="count" id="countUpdates">0</span>
+          </button>
+          <button class="tab" type="button" data-tab="posts" role="tab" aria-selected="false">
+            📰 部落格 <span class="count" id="countPosts">0</span>
+          </button>
+          <button class="tab" type="button" data-tab="group" role="tab" aria-selected="false">
+            🎮 放浪團 <span class="count" id="countGroup">0</span>
+          </button>
+        </nav>
+
+        <div class="notice-soft" id="roleNotice" hidden></div>
+        <p class="hint" id="uploadHint" hidden>
+          📷 成員頭像與精選圖片支援直接上傳：會自動壓縮成 WebP（頭像最長邊 640px、精選圖 1200px），
+          儲存時一起上傳到 <strong>group/</strong>。
+        </p>
+
+        <div id="panels">
+          <section class="panel" data-panel="updates" role="tabpanel"></section>
+          <section class="panel" data-panel="posts" role="tabpanel" hidden></section>
+          <section class="panel" data-panel="group" role="tabpanel" hidden></section>
+        </div>
+      </section>
+    </div>
+
+    <!-- ================= 儲存列 ================= -->
+    <div class="savebar" id="savebar" hidden>
+      <div class="savebar-text" id="savebarText"><span class="dot"></span><span id="dirtyText">尚未修改</span></div>
+      <div class="savebar-actions">
+        <button class="btn ghost" id="discardBtn" type="button">還原變更</button>
+        <button class="btn primary" id="saveBtn" type="button">儲存並發布</button>
+      </div>
+    </div>
+
+    <div id="toast" role="status" aria-live="polite"></div>
+    <div id="overlay" hidden><div><div class="spinner"></div><div id="overlayText">處理中…</div></div></div>
+
+    <datalist id="tagOptions">
+      <option value="更新"></option>
+      <option value="優化"></option>
+      <option value="修正"></option>
+      <option value="新增"></option>
+      <option value="活動"></option>
+    </datalist>
+  </body>
+</html>

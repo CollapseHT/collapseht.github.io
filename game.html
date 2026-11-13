@@ -1,60 +1,94 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
   <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=yes"
-    />
-    <title>子彈の貓窩 ‧ Game</title>
-    <link rel="stylesheet" href="css/style.css" />
-    <link href="images/icon.png" rel="shortcut icon" />
-    <script src="js/script.js" defer></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>子彈の貓窩 ‧ 遊戲紀錄 | CollapseHT</title>
+    <meta name="description" content="CollapseHT 的遊戲紀錄：三角洲行動、maimai DX、Beatmania IIDX、SOUND VOLTEX、頭文字D 等街機與 PC 遊戲戰績。" />
+    <meta name="author" content="CollapseHT" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#f3e6f8" />
+    <meta name="color-scheme" content="light" />
+    <link rel="canonical" href="https://collapseht.github.io/game.html" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="子彈の貓窩" />
+    <meta property="og:title" content="子彈の貓窩 ‧ 遊戲紀錄 | CollapseHT" />
+    <meta property="og:description" content="三角洲行動、maimai DX、IIDX、SOUND VOLTEX、頭文字D 等遊戲戰績。" />
+    <meta property="og:url" content="https://collapseht.github.io/game.html" />
+    <meta property="og:image" content="https://collapseht.github.io/images/og-cover.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="子彈の貓窩 ‧ CollapseHT 個人網站" />
+    <meta property="og:locale" content="zh_TW" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png" />
+    <link rel="manifest" href="site.webmanifest" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+    <link rel="stylesheet" href="css/style.css?v=3.1.0" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap"
     />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      />
+      <style>
+        #loading-screen {
+          display: none !important;
+        }
+      </style>
+    </noscript>
+    <script src="js/script.js?v=3.1.0" defer></script>
   </head>
   <body>
-    <!-- ===== 載入畫面 ===== -->
-    <div id="loading-screen">
+    <a class="skip-link" href="#main">跳至主要內容</a>
+
+    <div id="loading-screen" aria-hidden="true">
       <div class="loading-content">
-        <div class="loading-riceball">
-          <i class="fa-solid fa-cat"></i>
-        </div>
+        <div class="loading-riceball"><i class="fa-solid fa-cat"></i></div>
         <div class="loading-text">もぐもぐ...</div>
         <div class="loading-paws"><span>🐾</span> <span>🐾</span></div>
       </div>
     </div>
 
-    <div class="deco-emoji deco-1">🍙</div>
-    <div class="deco-emoji deco-2">🐾</div>
-    <div class="deco-emoji deco-3">🎮</div>
-    <div class="deco-emoji deco-4">✨</div>
+    <div class="deco-emoji deco-1" aria-hidden="true">🍙</div>
+    <div class="deco-emoji deco-2" aria-hidden="true">🐾</div>
+    <div class="deco-emoji deco-3" aria-hidden="true">🎮</div>
+    <div class="deco-emoji deco-4" aria-hidden="true">✨</div>
 
     <div class="container">
-      <nav class="navbar">
-        <div class="nav-brand">
+      <nav class="navbar" aria-label="網站主選單">
+        <a class="nav-brand" href="index.html">
           <i class="fa-solid fa-cat"></i> おかゆの隠れ家
-        </div>
+        </a>
         <ul class="nav-links" id="navLinks">
           <li>
             <a href="index.html"><i class="fa-solid fa-home"></i> 首頁</a>
           </li>
           <li>
-            <a href="update.html"
-              ><i class="fa-solid fa-clock-rotate-left"></i> 更新歷程</a
+            <a href="update.html"><i class="fa-solid fa-clock-rotate-left"></i> 更新歷程</a>
+          </li>
+          <li>
+            <a href="blog.html"
+              ><i class="fa-solid fa-blog"></i> 部落格</a
             >
           </li>
           <li>
-            <a href="blog.html"><i class="fa-solid fa-blog"></i> 部落格</a>
-          </li>
-          <li>
-            <a href="game.html" class="active"
+            <a href="game.html" class="active" aria-current="page"
               ><i class="fa-solid fa-gamepad"></i> 遊戲</a
             >
           </li>
@@ -62,120 +96,115 @@
             <a href="group.html"><i class="fa-solid fa-users"></i> 放浪團</a>
           </li>
         </ul>
-        <div class="nav-toggle" id="mobileMenu">
+        <button
+          class="nav-toggle"
+          id="mobileMenu"
+          type="button"
+          aria-label="開啟導覽選單"
+          aria-expanded="false"
+          aria-controls="navLinks"
+        >
           <i class="fa-solid fa-bars"></i>
-        </div>
+        </button>
       </nav>
 
-      <div class="page-header">
-        <h2><i class="fa-solid fa-gamepad"></i> 遊戲紀錄</h2>
-        <p>もぐもぐ～ 歡迎參考我的遊戲歷程 🎮</p>
-      </div>
+      <main id="main">
+        <div class="page-header">
+          <h1><i class="fa-solid fa-gamepad"></i> 遊戲紀錄</h1>
+          <p>もぐもぐ～ 歡迎參考我的遊戲歷程 🎮</p>
+        </div>
 
-      <!-- PC 遊戲區塊 -->
-      <div class="game-category">
-        <h3 class="category-title">
-          <i class="fa-solid fa-desktop"></i> PC 遊戲
-        </h3>
-        <div class="game-list two-columns">
-          <div class="game-item">
-            <div class="game-icon"><i class="fa-solid fa-gun"></i></div>
-            <div class="game-info">
-              <div class="game-name">三角洲行動</div>
-              <div class="game-rank">🏅 目前未打 (最高 統帥23★)</div>
-              <div class="game-record">📊 最高記錄：161k/3d Score：45922</div>
+        <!-- PC 遊戲區塊 -->
+        <section class="game-category" aria-labelledby="pc-games">
+          <h2 class="category-title" id="pc-games">
+            <i class="fa-solid fa-desktop"></i> PC 遊戲
+          </h2>
+          <div class="game-list two-columns">
+            <div class="game-item">
+              <div class="game-icon" aria-hidden="true"><i class="fa-solid fa-gun"></i></div>
+              <div class="game-info">
+                <h3 class="game-name">三角洲行動</h3>
+                <p class="game-rank">🏅 目前未打 (最高 統帥23★)</p>
+                <p class="game-record">📊 最高記錄：161k/3d Score：45922</p>
+              </div>
             </div>
-          </div>
-          <div class="game-item">
-            <div class="game-icon"><i class="fa-solid fa-music"></i></div>
-            <div class="game-info">
-              <div class="game-name">PC端音遊</div>
-              <div class="game-rank">🎵 Osu!mania/quaver/DJMAX/etterna等.</div>
-              <div class="game-record">
-                🏳️ 最高紀錄：osu!mania Rank: 世界#6568(7年前)
+            <div class="game-item">
+              <div class="game-icon" aria-hidden="true"><i class="fa-solid fa-music"></i></div>
+              <div class="game-info">
+                <h3 class="game-name">PC端音遊</h3>
+                <p class="game-rank">🎵 Osu!mania/quaver/DJMAX/etterna等.</p>
+                <p class="game-record">🏳️ 最高紀錄：osu!mania Rank: 世界#6568(7年前)</p>
+              </div>
+            </div>
+            <div class="game-item">
+              <div class="game-icon" aria-hidden="true"><i class="fa-solid fa-fish"></i></div>
+              <div class="game-info">
+                <h3 class="game-name">Russian Fishing 4(近期入坑)</h3>
+                <p class="game-rank">💠 Lv.8 - FD釣竿/手竿</p>
+                <p class="game-record">🔥 最高魚紀錄：??? 1.037kg</p>
+              </div>
+            </div>
+            <div class="game-item">
+              <div class="game-icon" aria-hidden="true"><i class="fa-solid fa-dragon"></i></div>
+              <div class="game-info">
+                <h3 class="game-name">無其他遊戲</h3>
+                <p class="game-rank">想到之後再放</p>
+                <p class="game-record">----------</p>
               </div>
             </div>
           </div>
-          <div class="game-item">
-            <div class="game-icon"><i class="fa-solid fa-fish"></i></div>
-            <div class="game-info">
-              <div class="game-name">Russian Fishing 4(近期入坑)</div>
-              <div class="game-rank">💠 Lv.8 - FD釣竿/手竿</div>
-              <div class="game-record">🔥 最高魚紀錄：??? 1.037kg</div>
+        </section>
+
+        <!-- 街機遊戲區塊 -->
+        <section class="game-category" aria-labelledby="arcade-games">
+          <h2 class="category-title" id="arcade-games">
+            <i class="fa-solid fa-gamepad"></i> 街機遊戲
+          </h2>
+          <div class="game-list two-columns">
+            <div class="game-item">
+              <div class="game-icon" aria-hidden="true"><i class="fa-solid fa-music"></i></div>
+              <div class="game-info">
+                <h3 class="game-name">maimai DX</h3>
+                <p class="game-rank">🎵 Rating：15682</p>
+                <p class="game-record">✨ 最高對戰：SS1 50/50</p>
+              </div>
+            </div>
+            <div class="game-item">
+              <div class="game-icon" aria-hidden="true"><i class="fa-solid fa-compact-disc"></i></div>
+              <div class="game-info">
+                <h3 class="game-name">Beatmania IIDX</h3>
+                <p class="game-rank">🎵 段位：七段</p>
+                <p class="game-record">✨ LV.10 AA 100+達成</p>
+              </div>
+            </div>
+            <div class="game-item">
+              <div class="game-icon" aria-hidden="true"><i class="fa-solid fa-car"></i></div>
+              <div class="game-info">
+                <h3 class="game-name">頭文字D THE ARCADE</h3>
+                <p class="game-rank">🏎️ 等級：SS8</p>
+                <p class="game-record">🌉 對戰段位：綠盾2</p>
+              </div>
+            </div>
+            <div class="game-item">
+              <div class="game-icon" aria-hidden="true"><i class="fa-solid fa-keyboard"></i></div>
+              <div class="game-info">
+                <h3 class="game-name">SOUND VOLTEX</h3>
+                <p class="game-rank">🎶 段位：10 剛力羅</p>
+                <p class="game-record">⭐ 擅長：鍵盤/不擅長：旋鈕</p>
+              </div>
             </div>
           </div>
-          <div class="game-item">
-            <div class="game-icon"><i class="fa-solid fa-dragon"></i></div>
-            <div class="game-info">
-              <div class="game-name">無其他遊戲</div>
-              <div class="game-rank">想到之後再放</div>
-              <div class="game-record">----------</div>
-            </div>
-          </div>
+        </section>
+
+        <div class="game-note-box">
+          <p><i class="fa-solid fa-comment"></i> もぐもぐ～！以上是目前的主要戰績，持續更新中 🐾</p>
         </div>
-      </div>
+      </main>
 
-      <!-- 街機遊戲區塊 -->
-      <div class="game-category">
-        <h3 class="category-title">
-          <i class="fa-solid fa-gamepad"></i> 街機遊戲
-        </h3>
-        <div class="game-list two-columns">
-          <div class="game-item">
-            <div class="game-icon"><i class="fa-solid fa-music"></i></div>
-            <div class="game-info">
-              <div class="game-name">maimai DX</div>
-              <div class="game-rank">🎵 Rating：15682</div>
-              <div class="game-record">✨ 最高對戰：SS1 50/50</div>
-            </div>
-          </div>
-          <div class="game-item">
-            <div class="game-icon">
-              <i class="fa-solid fa-compact-disc"></i>
-            </div>
-            <div class="game-info">
-              <div class="game-name">Beatmania IIDX</div>
-              <div class="game-rank">🎵 段位：七段</div>
-              <div class="game-record">✨ LV.10 AA 100+達成</div>
-            </div>
-          </div>
-          <div class="game-item">
-            <div class="game-icon"><i class="fa-solid fa-car"></i></div>
-            <div class="game-info">
-              <div class="game-name">頭文字D THE ARCADE</div>
-              <div class="game-rank">🏎️ 等級：SS8</div>
-              <div class="game-record">🌉 對戰段位：綠盾2</div>
-            </div>
-          </div>
-          <div class="game-item">
-            <div class="game-icon"><i class="fa-solid fa-keyboard"></i></div>
-            <div class="game-info">
-              <div class="game-name">SOUND VOLTEX</div>
-              <div class="game-rank">🎶 段位：10 剛力羅</div>
-              <div class="game-record">⭐ 擅長：鍵盤/不擅長：旋鈕</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="game-note-box">
-        <p>
-          <i class="fa-solid fa-comment"></i>
-          もぐもぐ～！以上是目前的主要戰績，持續更新中 🐾
-        </p>
-      </div>
-
-      <footer>🍙 もぐもぐ～おかゆ～ 🐾 遊戲與飯糰不可辜負</footer>
+      <footer>
+        <p>🍙 もぐもぐ～おかゆ～ 🐾 遊戲與飯糰不可辜負</p>
+        <p class="footer-legal">© 2021–2026 CollapseHT. All rights reserved.</p>
+      </footer>
     </div>
-
-    <script>
-      const toggleBtn = document.getElementById("mobileMenu");
-      const navLinks = document.getElementById("navLinks");
-      if (toggleBtn) {
-        toggleBtn.addEventListener("click", () => {
-          navLinks.classList.toggle("show");
-        });
-      }
-    </script>
   </body>
 </html>

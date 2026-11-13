@@ -1,19 +1,6 @@
 // protected-download.js
 
-document.onkeydown = function () {
-  if (event.ctrlKey && window.event.keyCode == 85) {
-    return false;
-  }
-  if (window.event.keyCode == 123) {
-    return false;
-  }
-  if (event.ctrlKey && window.event.keyCode == 83) {
-    return false;
-  }
-  if (event.ctrlKey) {
-    return false;
-  }
-};
+
 
 async function sha256(input) {
   const encoder = new TextEncoder();
@@ -39,7 +26,7 @@ async function requestProtectedDownload() {
   if (inputHash === CORRECT_PASSWORD_HASH) {
     // 密碼正確 → 開始下載
     const link = document.createElement("a");
-    link.href = "./resource/boss1.6-COR.7z"; // ← 改成你要下載的檔案路徑或名稱
+    link.href = "./assets/resource/boss1.6-COR.7z"; // ← 改成你要下載的檔案路徑或名稱
     // 範例：
     // link.href = "files/機密資料.zip";
     // link.href = "https://example.com/報告.pdf";

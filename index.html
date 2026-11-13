@@ -1,56 +1,112 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>子彈の貓窩 ‧ 首頁 | CollapseHT</title>
     <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=yes"
+      name="description"
+      content="子彈の貓窩 ‧ CollapseHT 的個人網站 3.0：以貓又おかゆ為主題，記錄遊戲戰績、網站更新與日常的快樂小窩。"
     />
-    <title>子彈の貓窩 ‧ Home</title>
-    <link href="images/icon.png" rel="shortcut icon" />
-    <link rel="stylesheet" href="css/style.css" />
-    <script src="js/script.js" defer></script>
+    <meta name="author" content="CollapseHT" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#f3e6f8" />
+    <meta name="color-scheme" content="light" />
+    <link rel="canonical" href="https://collapseht.github.io/" />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="子彈の貓窩" />
+    <meta property="og:title" content="子彈の貓窩 ‧ 首頁 | CollapseHT" />
+    <meta
+      property="og:description"
+      content="以貓又おかゆ為主題的個人網站：遊戲戰績、更新歷程與日常的快樂小窩。"
+    />
+    <meta property="og:url" content="https://collapseht.github.io/" />
+    <meta property="og:image" content="https://collapseht.github.io/images/og-cover.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="子彈の貓窩 ‧ CollapseHT 個人網站" />
+    <meta property="og:locale" content="zh_TW" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png" />
+    <link rel="manifest" href="site.webmanifest" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+    <link rel="stylesheet" href="css/style.css?v=3.1.0" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap"
     />
+    <!-- 圖示字型不阻擋首次渲染，載入後才套用 -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      />
+      <style>
+        #loading-screen {
+          display: none !important;
+        }
+      </style>
+    </noscript>
+    <script src="js/script.js?v=3.1.0" defer></script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "子彈の貓窩",
+        "alternateName": "CollapseHT 個人網站",
+        "url": "https://collapseht.github.io/",
+        "inLanguage": "zh-Hant-TW",
+        "description": "以貓又おかゆ為主題的個人網站：遊戲戰績、更新歷程與日常的快樂小窩。",
+        "author": {
+          "@type": "Person",
+          "name": "CollapseHT",
+          "url": "https://github.com/CollapseHT"
+        }
+      }
+    </script>
   </head>
   <body>
+    <a class="skip-link" href="#main">跳至主要內容</a>
+
     <!-- ===== 載入畫面 ===== -->
-    <div id="loading-screen">
+    <div id="loading-screen" aria-hidden="true">
       <div class="loading-content">
-        <div class="loading-riceball">
-          <i class="fa-solid fa-cat"></i>
-        </div>
+        <div class="loading-riceball"><i class="fa-solid fa-cat"></i></div>
         <div class="loading-text">もぐもぐ...</div>
         <div class="loading-paws"><span>🐾</span> <span>🐾</span></div>
       </div>
     </div>
 
-    <div class="deco-emoji deco-1">🍙</div>
-    <div class="deco-emoji deco-2">🐾</div>
-    <div class="deco-emoji deco-3">🎮</div>
-    <div class="deco-emoji deco-4">✨</div>
+    <div class="deco-emoji deco-1" aria-hidden="true">🍙</div>
+    <div class="deco-emoji deco-2" aria-hidden="true">🐾</div>
+    <div class="deco-emoji deco-3" aria-hidden="true">🎮</div>
+    <div class="deco-emoji deco-4" aria-hidden="true">✨</div>
 
     <div class="container">
-      <nav class="navbar">
-        <div class="nav-brand">
+      <nav class="navbar" aria-label="網站主選單">
+        <a class="nav-brand" href="index.html">
           <i class="fa-solid fa-cat"></i> おかゆの隠れ家
-        </div>
+        </a>
         <ul class="nav-links" id="navLinks">
           <li>
-            <a href="index.html" class="active"
-              ><i class="fa-solid fa-home"></i> 首頁</a
-            >
+            <a href="index.html" class="active" aria-current="page"><i class="fa-solid fa-home"></i> 首頁</a>
           </li>
           <li>
-            <a href="update.html"
-              ><i class="fa-solid fa-clock-rotate-left"></i> 更新歷程</a
-            >
+            <a href="update.html"><i class="fa-solid fa-clock-rotate-left"></i> 更新歷程</a>
           </li>
           <li>
             <a href="blog.html"><i class="fa-solid fa-blog"></i> 部落格</a>
@@ -62,228 +118,206 @@
             <a href="group.html"><i class="fa-solid fa-users"></i> 放浪團</a>
           </li>
         </ul>
-        <div class="nav-toggle" id="mobileMenu">
+        <button
+          class="nav-toggle"
+          id="mobileMenu"
+          type="button"
+          aria-label="開啟導覽選單"
+          aria-expanded="false"
+          aria-controls="navLinks"
+        >
           <i class="fa-solid fa-bars"></i>
-        </div>
+        </button>
       </nav>
 
-      <div class="hero">
-        <div class="avatar">
-          <img src="images/self.png" />
-        </div>
-        <div class="greeting">
-          <i class="fa-solid fa-star"></i> もぐもぐ～おかゆ～ ✨
-          <i class="fa-solid fa-heart"></i>
-        </div>
-        <h1>子彈の貓窩 ‧ CollapseHT</h1>
-        <div class="tagline">
-          個人網站 3.0, 以貓又おかゆ為主題, 記錄個人學習及日常的快樂小窩.
-        </div>
-      </div>
-
-      <!-- About Me 區塊 -->
-      <div class="about-section">
-        <h2 class="section-title">
-          <i class="fa-solid fa-user-astronaut"></i> 關於我 / About Me
-        </h2>
-        <div class="about-container">
-          <div class="about-left">
-            <div class="profile-intro">
-              <div class="profile-name">
-                <i class="fa-solid fa-cat"></i> CollapseHT<span class="nickname"
-                  >(a.k.a. 子彈)</span
-                >
-              </div>
-              <p class="profile-desc">
-                一個有社恐及表達能力稍差的音遊人(但熟的話可能會很ㄎㄧㄤ ?)<br />
-                主打槍戰/音樂遊戲(其他遊戲可能也有玩),
-                想認識的話可以找共同朋友找我, 或是DM我.
-              </p>
-            </div>
-            <div class="profile-stats">
-              <div class="stat-badge">
-                <i class="fa-solid fa-code"></i> 個人網站歷程：2014-now
-              </div>
-              <div class="stat-badge">
-                <i class="fa-solid fa-heart"></i> 主推：貓又おかゆ
-              </div>
-              <div class="stat-badge">
-                <i class="fa-solid fa-gamepad"></i>
-                近期遊戲：頭文字D、IIDX、三角洲
-              </div>
-              <div class="stat-badge">
-                <i class="fa-solid fa-globe"></i> 網站主題：貓又おかゆ/遊戲/日常
-              </div>
-            </div>
+      <main id="main">
+        <header class="hero">
+          <div class="avatar">
+            <img
+              src="images/self.png"
+              alt="CollapseHT 的頭像"
+              width="130"
+              height="130"
+              fetchpriority="high"
+              decoding="async"
+            />
           </div>
-          <div class="about-right">
-            <div class="info-grid">
-              <div class="info-item">
-                <i class="fa-solid fa-laptop-code"></i>
-                <div>
-                  <h4>開發日常</h4>
-                  <p>VS Code · HTML · Discord Bot(ts)</p>
+          <p class="greeting">
+            <i class="fa-solid fa-star"></i> もぐもぐ～おかゆ～ ✨
+            <i class="fa-solid fa-heart"></i>
+          </p>
+          <h1>子彈の貓窩 ‧ CollapseHT</h1>
+          <p class="tagline">
+            個人網站 3.0, 以貓又おかゆ為主題, 記錄個人學習及日常的快樂小窩.
+          </p>
+        </header>
+
+        <!-- About Me 區塊 -->
+        <section class="about-section" aria-labelledby="about-title">
+          <h2 class="section-title" id="about-title">
+            <i class="fa-solid fa-user-astronaut"></i> 關於我 / About Me
+          </h2>
+          <div class="about-container">
+            <div class="about-left">
+              <div class="profile-intro">
+                <div class="profile-name">
+                  <i class="fa-solid fa-cat"></i> CollapseHT<span class="nickname">(a.k.a. 子彈)</span>
                 </div>
+                <p class="profile-desc">
+                  一個有社恐及表達能力稍差的音遊人(但熟的話可能會很ㄎㄧㄤ ?)<br />
+                  主打槍戰/音樂遊戲(其他遊戲可能也有玩), 想認識的話可以找共同朋友找我, 或是DM我.
+                </p>
               </div>
-              <div class="info-item">
-                <i class="fa-solid fa-music"></i>
-                <div>
-                  <h4>最近聽的歌(系列)</h4>
-                  <p>貓又おかゆ(cover/orignal)<br />eurobeat</p>
+              <div class="profile-stats">
+                <div class="stat-badge">
+                  <i class="fa-solid fa-code"></i> 個人網站歷程：2014-now
                 </div>
-              </div>
-              <div class="info-item">
-                <i class="fa-solid fa-cat"></i>
-                <div>
-                  <h4>喜歡的事物/興趣</h4>
-                  <p>跟朋友打屁哈啦、打遊戲、遊戲交流等.</p>
+                <div class="stat-badge">
+                  <i class="fa-solid fa-heart"></i> 主推：貓又おかゆ
                 </div>
-              </div>
-              <div class="info-item">
-                <i class="fa-solid fa-dog"></i>
-                <div>
-                  <h4>預期計畫</h4>
-                  <p>豐富個人網站, 研究資安, 研究更多程式等.</p>
+                <div class="stat-badge">
+                  <i class="fa-solid fa-gamepad"></i> 近期遊戲：頭文字D、IIDX、三角洲
+                </div>
+                <div class="stat-badge">
+                  <i class="fa-solid fa-globe"></i> 網站主題：貓又おかゆ/遊戲/日常
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 並排雙卡片：語錄 + 時鐘 -->
-      <div class="double-card-grid">
-        <!-- 語錄卡片 -->
-        <div class="card">
-          <h3><i class="fa-solid fa-comment-dots"></i> 抽屜小語錄</h3>
-          <div class="quote-text">
-            ⚖️ 「有些事停在不知道的時候, 是完好無瑕的.」
-          </div>
-          <div class="quote-author">— CollapseHT</div>
-          <div class="quote-text" style="margin-top: 0.8rem">
-            ⚖️ 「心理障礙的音遊人是普通人體會不到的, 唯有實際體驗過,
-            才知道音遊人的辛酸.」
-          </div>
-          <div class="quote-author">— CollapseHT</div>
-          <div class="quote-text" style="margin-top: 0.8rem">
-            ☕ 「一杯咖啡的苦澀，換來了友誼的離去。」
-          </div>
-          <div class="quote-author">— CollapseHT</div>
-          <div class="quote-text" style="margin-top: 0.8rem">
-            ☁️ 「喜歡一個人很簡單，但被喜歡往往是一件很困難的事。」
-          </div>
-          <div class="quote-author">— CollapseHT</div>
-        </div>
-
-        <!-- 時鐘卡片（風格加強版） -->
-        <div class="card clock-card-enhanced">
-          <h3>
-            <i class="fa-regular fa-clock"></i> もぐもぐ時間/今日運勢
-            <i class="fa-solid fa-cat"></i>
-          </h3>
-          <div class="enhanced-clock">
-            <div class="clock-digits" id="liveClockEnhanced">--:--:--</div>
-            <div class="clock-deco">
-              <span class="paw-left">🐾</span>
-              <span class="clock-message" id="clockMessageEnhanced"
-                >もぐもぐ～</span
-              >
-              <span class="paw-right">🐾</span>
+            <div class="about-right">
+              <div class="info-grid">
+                <div class="info-item">
+                  <i class="fa-solid fa-laptop-code"></i>
+                  <div>
+                    <h3>開發日常</h3>
+                    <p>VS Code · HTML · Discord Bot(ts)</p>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <i class="fa-solid fa-music"></i>
+                  <div>
+                    <h3>最近聽的歌(系列)</h3>
+                    <p>貓又おかゆ(cover/orignal)<br />eurobeat</p>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <i class="fa-solid fa-cat"></i>
+                  <div>
+                    <h3>喜歡的事物/興趣</h3>
+                    <p>跟朋友打屁哈啦、打遊戲、遊戲交流等.</p>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <i class="fa-solid fa-dog"></i>
+                  <div>
+                    <h3>預期計畫</h3>
+                    <p>豐富個人網站, 研究資安, 研究更多程式等.</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="fortune-in-clock">
-            <div class="fortune-level" id="fortuneLevel">抽取中...</div>
-            <div class="fortune-detail">
-              <p>
-                <i class="fa-regular fa-face-smile"></i>
-                <span id="fortuneText"></span>
-              </p>
-              <p>
-                <i class="fa-solid fa-gem"></i> 幸運物：<span
-                  id="fortuneItem"
-                ></span>
-              </p>
-              <p>
-                <i class="fa-solid fa-palette"></i> 幸運色：<span
-                  id="fortuneColor"
-                ></span>
-              </p>
-              <p>
-                <i class="fa-regular fa-message"></i> 小粥的一句話：<span
-                  id="fortuneAdvice"
-                ></span>
-              </p>
+        </section>
+
+        <!-- 並排雙卡片：語錄 + 時鐘 -->
+        <div class="double-card-grid">
+          <!-- 語錄卡片 -->
+          <section class="card" aria-labelledby="quote-title">
+            <h2 class="card-title" id="quote-title">
+              <i class="fa-solid fa-comment-dots"></i> 抽屜小語錄
+            </h2>
+            <div class="quote">
+              <p class="quote-text">⚖️ 「有些事停在不知道的時候, 是完好無瑕的.」</p>
+              <p class="quote-author">— CollapseHT</p>
             </div>
-          </div>
-          <div class="clock-footer">
-            <i class="fa-solid fa-cat"></i> 毎日もぐもぐ
-            <i class="fa-solid fa-cat"></i>
-          </div>
-        </div>
-      </div>
+            <div class="quote">
+              <p class="quote-text">
+                ⚖️ 「心理障礙的音遊人是普通人體會不到的, 唯有實際體驗過, 才知道音遊人的辛酸.」
+              </p>
+              <p class="quote-author">— CollapseHT</p>
+            </div>
+            <div class="quote">
+              <p class="quote-text">☕ 「一杯咖啡的苦澀，換來了友誼的離去。」</p>
+              <p class="quote-author">— CollapseHT</p>
+            </div>
+            <div class="quote">
+              <p class="quote-text">☁️ 「喜歡一個人很簡單，但被喜歡往往是一件很困難的事。」</p>
+              <p class="quote-author">— CollapseHT</p>
+            </div>
+          </section>
 
-      <!-- 貓掌彩蛋 (隱藏) -->
-      <div class="secret-section" hidden>
-        <div class="clickable-paw" id="clickablePaw">
-          <i class="fa-solid fa-paw"></i> 點我！<i class="fa-solid fa-paw"></i>
+          <!-- 時鐘卡片（風格加強版） -->
+          <section class="card clock-card-enhanced" aria-labelledby="clock-title">
+            <h2 class="card-title" id="clock-title">
+              <i class="fa-regular fa-clock"></i> もぐもぐ時間/今日運勢
+              <i class="fa-solid fa-cat"></i>
+            </h2>
+            <div class="enhanced-clock">
+              <div class="clock-digits" id="liveClockEnhanced">--:--:--</div>
+              <div class="clock-deco">
+                <span class="paw-left" aria-hidden="true">🐾</span>
+                <span class="clock-message" id="clockMessageEnhanced">もぐもぐ～</span>
+                <span class="paw-right" aria-hidden="true">🐾</span>
+              </div>
+            </div>
+            <div class="fortune-in-clock" role="status" aria-live="polite">
+              <div class="fortune-level" id="fortuneLevel">抽取中...</div>
+              <div class="fortune-detail">
+                <p>
+                  <i class="fa-regular fa-face-smile"></i>
+                  <span id="fortuneText"></span>
+                </p>
+                <p><i class="fa-solid fa-gem"></i> 幸運物：<span id="fortuneItem"></span></p>
+                <p><i class="fa-solid fa-palette"></i> 幸運色：<span id="fortuneColor"></span></p>
+                <p>
+                  <i class="fa-regular fa-message"></i> 小粥的一句話：<span id="fortuneAdvice"></span>
+                </p>
+              </div>
+            </div>
+            <div class="clock-footer">
+              <i class="fa-solid fa-cat"></i> 毎日もぐもぐ
+              <i class="fa-solid fa-cat"></i>
+            </div>
+          </section>
         </div>
-        <p class="secret-hint">（點擊貓掌有驚喜哦 🐾）</p>
-      </div>
 
-      <!-- 聯絡按鈕 -->
-      <div class="contact-links">
-        <a
-          href="https://www.facebook.com/CollapseHT39/"
-          class="cute-btn"
-          target="_blank"
-          ><i class="fa-brands fa-facebook"></i> Facebook</a
-        >
-        <a
-          href="https://www.instagram.com/yoshino039_cht/"
-          class="cute-btn"
-          target="_blank"
-          ><i class="fab fa-instagram"></i> Instagram</a
-        >
-        <a href="https://discord.gg/g7jRKrhQb4" class="cute-btn" target="_blank"
-          ><i class="fab fa-discord"></i> Discord</a
-        >
-      </div>
+        <!-- 貓掌彩蛋 -->
+        <div class="secret-section">
+          <button class="clickable-paw" id="clickablePaw" type="button">
+            <i class="fa-solid fa-paw"></i> 點我！<i class="fa-solid fa-paw"></i>
+          </button>
+          <p class="secret-hint">（點擊貓掌有驚喜哦 🐾）</p>
+        </div>
+
+        <!-- 聯絡按鈕 -->
+        <div class="contact-links">
+          <a
+            href="https://www.facebook.com/CollapseHT39/"
+            class="cute-btn"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><i class="fa-brands fa-facebook"></i> Facebook</a
+          >
+          <a
+            href="https://www.instagram.com/yoshino039_cht/"
+            class="cute-btn"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><i class="fa-brands fa-instagram"></i> Instagram</a
+          >
+          <a
+            href="https://discord.gg/g7jRKrhQb4"
+            class="cute-btn"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><i class="fa-brands fa-discord"></i> Discord</a
+          >
+        </div>
+      </main>
 
       <footer>
-        🍙 もぐもぐ～おかゆ～ 🐾 以貓又小粥為靈感的小窩 — 2026 持續もぐもぐ中<br />
-        <i class="fa-solid fa-copyright"></i> Copyright
-        <i class="fa-regular fa-copyright"></i> 2021-2026 CollapseHT. All rights
-        reserved.
+        <p>🍙 もぐもぐ～おかゆ～ 🐾 以貓又小粥為靈感的小窩 — 2026 持續もぐもぐ中</p>
+        <p class="footer-legal">© 2021–2026 CollapseHT. All rights reserved.</p>
       </footer>
     </div>
-
-    <script>
-      // 手機選單 toggle
-      const toggleBtn = document.getElementById("mobileMenu");
-      const navLinks = document.getElementById("navLinks");
-      if (toggleBtn) {
-        toggleBtn.addEventListener("click", () => {
-          navLinks.classList.toggle("show");
-        });
-      }
-
-      // 增強版時鐘
-      function updateEnhancedClock() {
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString("zh-TW", { hour12: false });
-        document.getElementById("liveClockEnhanced").innerText = timeStr;
-        const hour = now.getHours();
-        let msg = "もぐもぐ～おかゆ～";
-        if (hour < 6) msg = "🌙 夜深了，早點休息～";
-        else if (hour < 11) msg = "🍙 おはよう！早餐吃個飯糰吧";
-        else if (hour < 14) msg = "🍱 午餐時間～もぐもぐ";
-        else if (hour < 18) msg = "🍵 下午茶，來點小粥的歌";
-        else if (hour < 22) msg = "🎮 晚上一起打遊戲！";
-        else msg = "🐾 もぐもぐ～晚安～";
-        document.getElementById("clockMessageEnhanced").innerText = msg;
-      }
-      updateEnhancedClock();
-      setInterval(updateEnhancedClock, 1000);
-    </script>
   </body>
 </html>

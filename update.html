@@ -1,54 +1,86 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
   <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=yes"
-    />
-    <title>子彈の貓窩 ‧ Update</title>
-    <link rel="stylesheet" href="css/style.css" />
-    <link href="images/icon.png" rel="shortcut icon">
-    <script src="js/script.js" defer></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>子彈の貓窩 ‧ 更新歷程 | CollapseHT</title>
+    <meta name="description" content="子彈の貓窩的更新日誌：記錄網站 3.0 的每次改版、功能新增與日常調整。" />
+    <meta name="author" content="CollapseHT" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#f3e6f8" />
+    <meta name="color-scheme" content="light" />
+    <link rel="canonical" href="https://collapseht.github.io/update.html" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="子彈の貓窩" />
+    <meta property="og:title" content="子彈の貓窩 ‧ 更新歷程 | CollapseHT" />
+    <meta property="og:description" content="網站 3.0 的每次改版、功能新增與日常調整。" />
+    <meta property="og:url" content="https://collapseht.github.io/update.html" />
+    <meta property="og:image" content="https://collapseht.github.io/images/og-cover.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="子彈の貓窩 ‧ CollapseHT 個人網站" />
+    <meta property="og:locale" content="zh_TW" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png" />
+    <link rel="manifest" href="site.webmanifest" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+    <link rel="stylesheet" href="css/style.css?v=3.1.0" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap"
     />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      />
+      <style>
+        #loading-screen {
+          display: none !important;
+        }
+      </style>
+    </noscript>
+    <script src="js/script.js?v=3.1.0" defer></script>
   </head>
   <body>
-    <!-- ===== 載入畫面 ===== -->
-    <div id="loading-screen">
+    <a class="skip-link" href="#main">跳至主要內容</a>
+
+    <div id="loading-screen" aria-hidden="true">
       <div class="loading-content">
-        <div class="loading-riceball">
-          <i class="fa-solid fa-cat"></i>
-        </div>
+        <div class="loading-riceball"><i class="fa-solid fa-cat"></i></div>
         <div class="loading-text">もぐもぐ...</div>
         <div class="loading-paws"><span>🐾</span> <span>🐾</span></div>
       </div>
     </div>
 
-    <div class="deco-emoji deco-1">🍙</div>
-    <div class="deco-emoji deco-2">🐾</div>
-    <div class="deco-emoji deco-3">📝</div>
-    <div class="deco-emoji deco-4">✨</div>
+    <div class="deco-emoji deco-1" aria-hidden="true">🍙</div>
+    <div class="deco-emoji deco-2" aria-hidden="true">🐾</div>
+    <div class="deco-emoji deco-3" aria-hidden="true">📝</div>
+    <div class="deco-emoji deco-4" aria-hidden="true">✨</div>
 
     <div class="container">
-      <nav class="navbar">
-        <div class="nav-brand">
+      <nav class="navbar" aria-label="網站主選單">
+        <a class="nav-brand" href="index.html">
           <i class="fa-solid fa-cat"></i> おかゆの隠れ家
-        </div>
+        </a>
         <ul class="nav-links" id="navLinks">
           <li>
             <a href="index.html"><i class="fa-solid fa-home"></i> 首頁</a>
           </li>
           <li>
-            <a href="update.html" class="active"
-              ><i class="fa-solid fa-clock-rotate-left"></i> 更新歷程</a
-            >
+            <a href="update.html" class="active" aria-current="page"><i class="fa-solid fa-clock-rotate-left"></i> 更新歷程</a>
           </li>
           <li>
             <a href="blog.html"><i class="fa-solid fa-blog"></i> 部落格</a>
@@ -57,67 +89,82 @@
             <a href="game.html"><i class="fa-solid fa-gamepad"></i> 遊戲</a>
           </li>
           <li>
-            <a href="group.html"
-              ><i class="fa-solid fa-users"></i> 放浪團</a
-            >
+            <a href="group.html"><i class="fa-solid fa-users"></i> 放浪團</a>
           </li>
         </ul>
-        <div class="nav-toggle" id="mobileMenu">
+        <button
+          class="nav-toggle"
+          id="mobileMenu"
+          type="button"
+          aria-label="開啟導覽選單"
+          aria-expanded="false"
+          aria-controls="navLinks"
+        >
           <i class="fa-solid fa-bars"></i>
-        </div>
+        </button>
       </nav>
 
-      <div class="page-header">
-        <h2><i class="fa-solid fa-pen-fancy"></i> 更新小本本</h2>
-        <p>記錄網站每次的進度與日常調整 🍙</p>
-      </div>
+      <main id="main">
+        <div class="page-header">
+          <h1><i class="fa-solid fa-pen-fancy"></i> 更新小本本</h1>
+          <p>記錄網站每次的進度與日常調整 🍙</p>
+        </div>
 
-      <div class="full-table-card">
-        <div class="kanban-table">
-          <div class="kanban-header">
-            <span class="col-date">日期</span>
-            <span class="col-tag">類型</span>
-            <span class="col-content">內容</span>
-          </div>
-          <div class="kanban-row">
-            <span class="col-date">07.06</span>
-            <span class="col-tag"><span class="tag-update">更新</span></span>
-            <span class="col-content"
-              >✨ 新增放浪團地帶，記錄團體動態</span
-            >
-          </div>
-          <div class="kanban-row">
-            <span class="col-date">05.18</span>
-            <span class="col-tag"><span class="tag-update">更新</span></span>
-            <span class="col-content"
-              >✨ 新增今日運勢功能，增添一些互動</span
-            >
-          </div>
-          <div class="kanban-row">
-            <span class="col-date">05.16</span>
-            <span class="col-tag"><span class="tag-update">更新</span></span>
-            <span class="col-content"
-              >✨ 網站全面翻新，個人網站3.0 🐾🍙</span
-            >
+        <div class="full-table-card">
+          <div class="kanban-table" role="table" aria-label="網站更新紀錄">
+            <div class="kanban-header" role="row">
+              <span class="col-date" role="columnheader">日期</span>
+              <span class="col-tag" role="columnheader">類型</span>
+              <span class="col-content" role="columnheader">內容</span>
+            </div>
+
+            <!-- AUTO:UPDATES:START -->
+            <div class="kanban-row" role="row">
+              <span class="col-date" role="cell"><time datetime="2026-11-14">11.14</time></span>
+              <span class="col-tag" role="cell"><span class="tag-update">新增</span></span>
+              <span class="col-content" role="cell">🖥 Legend 伺服器頁面獨立到 /legend/，換成新的淺色樣式與 WebP 圖片</span>
+            </div>
+
+            <div class="kanban-row" role="row">
+              <span class="col-date" role="cell"><time datetime="2026-11-14">11.14</time></span>
+              <span class="col-tag" role="cell"><span class="tag-update">新增</span></span>
+              <span class="col-content" role="cell">🧰 新增內容管理後台，可維護更新歷程、部落格與放浪團</span>
+            </div>
+            <div class="kanban-row" role="row">
+              <span class="col-date" role="cell"><time datetime="2026-11-14">11.14</time></span>
+              <span class="col-tag" role="cell"><span class="tag-update">優化</span></span>
+              <span class="col-content" role="cell">🧹 全站健檢：修正 HTML 結構、補齊 SEO 與無障礙、壓縮圖片與加速載入</span>
+            </div>
+            <div class="kanban-row" role="row">
+              <span class="col-date" role="cell"><time datetime="2026-07-06">07.06</time></span>
+              <span class="col-tag" role="cell"><span class="tag-update">更新</span></span>
+              <span class="col-content" role="cell">✨ 新增放浪團地帶，記錄團體動態</span>
+            </div>
+            <div class="kanban-row" role="row">
+              <span class="col-date" role="cell"><time datetime="2026-05-18">05.18</time></span>
+              <span class="col-tag" role="cell"><span class="tag-update">更新</span></span>
+              <span class="col-content" role="cell">✨ 新增今日運勢功能，增添一些互動</span>
+            </div>
+            <div class="kanban-row" role="row">
+              <span class="col-date" role="cell"><time datetime="2026-05-16">05.16</time></span>
+              <span class="col-tag" role="cell"><span class="tag-update">更新</span></span>
+              <span class="col-content" role="cell">✨ 網站全面翻新，個人網站3.0 🐾🍙</span>
+            </div>
+          <!-- AUTO:UPDATES:END -->
           </div>
 
-      <div class="back-home">
-        <a href="index.html" class="cute-btn"
-          ><i class="fa-solid fa-arrow-left"></i> 回到首頁</a
-        >
-      </div>
+          <div class="back-home">
+            <a href="index.html" class="cute-btn">
+              <i class="fa-solid fa-arrow-left"></i> 回到首頁
+            </a>
+          </div>
+        </div>
+      </main>
 
-      <footer>🍙 もぐもぐ～おかゆ～ 🐾 記錄每一次的可愛進步</footer>
+      <footer>
+        <p>🍙 もぐもぐ～おかゆ～ 🐾 記錄每一次的可愛進步</p>
+        <p class="footer-legal">© 2021–2026 CollapseHT. All rights reserved.</p>
+      </footer>
     </div>
-
-    <script>
-      const toggleBtn = document.getElementById("mobileMenu");
-      const navLinks = document.getElementById("navLinks");
-      if (toggleBtn) {
-        toggleBtn.addEventListener("click", () => {
-          navLinks.classList.toggle("show");
-        });
-      }
-    </script>
   </body>
 </html>

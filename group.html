@@ -1,53 +1,86 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
   <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=yes"
-    />
-    <title>子彈の貓窩 ‧ 放浪團地帶</title>
-    <link rel="stylesheet" href="css/style.css" />
-    <script src="js/script.js" defer></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>子彈の貓窩 ‧ 放浪團地帶 | CollapseHT</title>
+    <meta name="description" content="放浪團地帶：一群因遊戲與音樂相聚的夥伴，記錄成員介紹、團體動態與一起打鬧的日常。" />
+    <meta name="author" content="CollapseHT" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#f3e6f8" />
+    <meta name="color-scheme" content="light" />
+    <link rel="canonical" href="https://collapseht.github.io/group.html" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="子彈の貓窩" />
+    <meta property="og:title" content="子彈の貓窩 ‧ 放浪團地帶 | CollapseHT" />
+    <meta property="og:description" content="一群因遊戲與音樂相聚的夥伴，記錄成員介紹與團體動態。" />
+    <meta property="og:url" content="https://collapseht.github.io/group.html" />
+    <meta property="og:image" content="https://collapseht.github.io/images/og-cover.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="子彈の貓窩 ‧ CollapseHT 個人網站" />
+    <meta property="og:locale" content="zh_TW" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png" />
+    <link rel="manifest" href="site.webmanifest" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+    <link rel="stylesheet" href="css/style.css?v=3.1.0" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap"
     />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      />
+      <style>
+        #loading-screen {
+          display: none !important;
+        }
+      </style>
+    </noscript>
+    <script src="js/script.js?v=3.1.0" defer></script>
   </head>
   <body>
-    <!-- ===== 載入畫面 ===== -->
-    <div id="loading-screen">
+    <a class="skip-link" href="#main">跳至主要內容</a>
+
+    <div id="loading-screen" aria-hidden="true">
       <div class="loading-content">
-        <div class="loading-riceball">
-          <i class="fa-solid fa-cat"></i>
-        </div>
+        <div class="loading-riceball"><i class="fa-solid fa-cat"></i></div>
         <div class="loading-text">もぐもぐ...</div>
         <div class="loading-paws"><span>🐾</span> <span>🐾</span></div>
       </div>
     </div>
 
-    <div class="deco-emoji deco-1">🍙</div>
-    <div class="deco-emoji deco-2">🐾</div>
-    <div class="deco-emoji deco-3">🎮</div>
-    <div class="deco-emoji deco-4">✨</div>
+    <div class="deco-emoji deco-1" aria-hidden="true">🍙</div>
+    <div class="deco-emoji deco-2" aria-hidden="true">🐾</div>
+    <div class="deco-emoji deco-3" aria-hidden="true">🎮</div>
+    <div class="deco-emoji deco-4" aria-hidden="true">✨</div>
 
     <div class="container">
-      <nav class="navbar">
-        <div class="nav-brand">
+      <nav class="navbar" aria-label="網站主選單">
+        <a class="nav-brand" href="index.html">
           <i class="fa-solid fa-cat"></i> おかゆの隠れ家
-        </div>
+        </a>
         <ul class="nav-links" id="navLinks">
           <li>
             <a href="index.html"><i class="fa-solid fa-home"></i> 首頁</a>
           </li>
           <li>
-            <a href="update.html"
-              ><i class="fa-solid fa-clock-rotate-left"></i> 更新歷程</a
-            >
+            <a href="update.html"><i class="fa-solid fa-clock-rotate-left"></i> 更新歷程</a>
           </li>
           <li>
             <a href="blog.html"><i class="fa-solid fa-blog"></i> 部落格</a>
@@ -56,296 +89,221 @@
             <a href="game.html"><i class="fa-solid fa-gamepad"></i> 遊戲</a>
           </li>
           <li>
-            <a href="group.html" class="active"
-              ><i class="fa-solid fa-users"></i> 放浪團</a
-            >
+            <a href="group.html" class="active" aria-current="page"><i class="fa-solid fa-users"></i> 放浪團</a>
           </li>
         </ul>
-        <div class="nav-toggle" id="mobileMenu">
+        <button
+          class="nav-toggle"
+          id="mobileMenu"
+          type="button"
+          aria-label="開啟導覽選單"
+          aria-expanded="false"
+          aria-controls="navLinks"
+        >
           <i class="fa-solid fa-bars"></i>
-        </div>
+        </button>
       </nav>
 
-      <!-- 頁面標題 -->
-      <div class="page-header">
-        <h2><i class="fa-solid fa-users"></i> 放浪團地帶</h2>
-        <p>もぐもぐ～歡迎來到我們的快樂小圈圈 🐾</p>
-      </div>
+      <main id="main">
+        <div class="page-header">
+          <h1><i class="fa-solid fa-users"></i> 放浪團地帶</h1>
+          <p>もぐもぐ～歡迎來到我們的快樂小圈圈 🐾</p>
+        </div>
 
-      <!-- 團簡介 -->
-      <div class="group-intro card">
-        <div class="group-banner">
-          <i class="fa-solid fa-people-group"></i>
-        </div>
-        <div class="group-description">
-          <h3>關於放浪團</h3>
-          <p>
-            一群因為遊戲、音樂而聚集在一起的小夥伴們。<br />
-            我們在崑科大上相遇，在遊戲中連動，在EETC裡打鬧<br />
-            這裡記錄著每位成員的日常與遊戲戰績 🎮
-          </p>
-        </div>
-      </div>
+        <!-- 團簡介 -->
+        <section class="group-intro card" aria-labelledby="group-about">
+          <div class="group-banner" aria-hidden="true">
+            <i class="fa-solid fa-people-group"></i>
+          </div>
+          <div class="group-description">
+            <h2 id="group-about">關於放浪團</h2>
+            <!-- AUTO:GROUP_INTRO:START -->
+            <p>
+              一群因為遊戲、音樂而聚集在一起的小夥伴們。<br />我們在崑科大上相遇，在遊戲中連動，在EETC裡打鬧<br />這裡記錄著每位成員的日常與遊戲戰績 🎮
+            </p>
+            <!-- AUTO:GROUP_INTRO:END -->
+          </div>
+        </section>
 
-      <!-- ===== 圖片文字區塊（可放合照／宣傳圖）===== -->
-      <div class="featured-media card">
-        <div class="media-image">
-          <!-- 替換成你的團體合照網址 -->
-          <img src="group/yen-revenge.png" alt="放浪團合照" align="top" />
-        </div>
-        <div class="media-content">
-          <h3><i class="fa-solid fa-image"></i> 放浪團精選</h3>
-          <p>
-            這裡可以放團體合照、活動紀念照，或是任何想與大家分享的圖片。<br />
-            🐾 もぐもぐ～每次聚會都是珍貴的回憶！
-          </p>
-        </div>
-      </div>
+        <!-- ===== 圖片文字區塊（可放合照／宣傳圖）===== -->
+        <section class="featured-media card" aria-labelledby="group-featured">
+          <!-- AUTO:FEATURED:START -->
+          <div class="media-image">
+            <img
+              src="group/yen-revenge.png"
+              alt="放浪團成員的合照"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div class="media-content">
+            <h2 id="group-featured"><i class="fa-solid fa-image"></i> 放浪團精選</h2>
+            <p>這裡可以放團體合照、活動紀念照，或是任何想與大家分享的圖片。<br />🐾 もぐもぐ～每次聚會都是珍貴的回憶！</p>
+          </div>
+          <!-- AUTO:FEATURED:END -->
+        </section>
 
-      <!-- ===== 更新現況（團體動態牆）===== -->
-      <div class="group-updates card">
-        <h3><i class="fa-solid fa-rss"></i> 放浪團近況</h3>
-        <div class="update-timeline">
-          <div class="update-item">
-            <div class="update-date">2026.07.06</div>
-            <div class="update-content">
-              <span class="update-tag">更新</span>
-              創建放浪團網站，記錄我們的日常。
+        <!-- ===== 更新現況（團體動態牆）===== -->
+        <section class="group-updates card" aria-labelledby="group-news">
+          <h2 id="group-news"><i class="fa-solid fa-rss"></i> 放浪團近況</h2>
+          <div class="update-timeline">
+            <!-- AUTO:GROUP_NEWS:START -->
+            <div class="update-item">
+              <div class="update-date"><time datetime="2026-11-14">2026.11.14</time></div>
+              <div class="update-content">
+                <span class="update-tag">更新</span>
+                新增後台編輯功能, 紀錄放浪團的生活
+              </div>
             </div>
+            <div class="update-item">
+              <div class="update-date"><time datetime="2026-07-06">2026.07.06</time></div>
+              <div class="update-content">
+                <span class="update-tag">更新</span>
+                創建放浪團網站，記錄我們的日常。
+              </div>
+            </div>
+            <!-- AUTO:GROUP_NEWS:END -->
           </div>
-        </div>
-        <div class="update-more">
-          <a href="#" class="cute-btn small">查看完整記錄</a>
-        </div>
-      </div>
+          <div class="update-more">
+            <a href="update.html" class="cute-btn small">查看完整記錄</a>
+          </div>
+        </section>
 
-      <!-- ===== 主要成員 ===== -->
-      <h3 class="section-subtitle">
-        <i class="fa-solid fa-crown"></i> 主要成員
-        <span class="branch-tag">核心</span>
-      </h3>
-      <div class="member-grid" id="mainMembers">
-        <!-- 成員 1：顏大哥（羽瞳） -->
-        <div class="member-card">
-          <div class="member-avatar">
-            <img src="group/yen.jpg" alt="顏大哥" />
-          </div>
-          <div class="member-info">
-            <h4 class="member-name">
-              羽瞳 <span class="member-tag">團長</span>
-            </h4>
-            <p class="member-role">
-              <i class="fa-solid fa-gamepad"></i> 主修：APEX / 怪物彈珠
-            </p>
-            <p class="member-desc">
-              放浪團的發起人，擅長打怪物彈珠，也擅長在 Discord跟Msg 裡發廢文。
-            </p>
-          </div>
-        </div>
-
-        <!-- 成員 2：子彈 -->
-        <div class="member-card">
-          <div class="member-avatar">
-            <img src="group/self.png" alt="子彈" />
-          </div>
-          <div class="member-info">
-            <h4 class="member-name">
-              子彈 <span class="member-tag">音遊擔當</span>
-            </h4>
-            <p class="member-role">
-              <i class="fa-solid fa-music"></i> 主修：音遊 / FPS
-            </p>
-            <p class="member-desc">
-              團裡的音遊擔當，音遊實力堅強，各類音遊都有不錯的成績。
-              也是貓又おかゆ的粉絲，常常在尋找貓又おかゆ的最新消息。
-            </p>
-            <!--
-            <div class="member-links">
-              <a href="#"><i class="fa-brands fa-discord"></i></a>
-              <a href="#"><i class="fa-brands fa-twitter"></i></a>
-              <a href="#"><i class="fa-regular fa-envelope"></i></a>
-            </div>-->
-          </div>
-        </div>
-
-        <!-- 成員 3：Gary -->
-        <div class="member-card">
-          <div class="member-avatar">
-            <img src="group/gary.png" alt="王公" />
-          </div>
-          <div class="member-info">
-            <h4 class="member-name">
-              Gary <span class="member-tag">破風者</span>
-            </h4>
-            <p class="member-role">
-              <i class="fa-solid fa-robot"></i> 主修：APEX / 崩鐵 / 攝影
-            </p>
-            <p class="member-desc">
-              團裡的破風者，喜歡騎車跟打遊戲，喜歡拍攝，說走就走的旅行家。
-            </p>
-          </div>
-        </div>
-
-        <!-- 成員 4：天際 -->
-        <div class="member-card">
-          <div class="member-avatar">
-            <img src="group/liu.jpg" alt="劉公" />
-          </div>
-          <div class="member-info">
-            <h4 class="member-name">
-              天際 <span class="member-tag">專題組長</span>
-            </h4>
-            <p class="member-role">
-              <i class="fa-solid fa-face-smile"></i> 主修：戰略遊戲
-            </p>
-            <p class="member-desc">
-              喜歡玩各種戰略遊戲，尤其是即時戰略類型。常常在群組裡分享遊戲心得與攻略。
-            </p>
-          </div>
+        <!-- ===== 主要成員 ===== -->
+        <h2 class="section-subtitle">
+          <i class="fa-solid fa-crown"></i> 主要成員
+          <span class="branch-tag">核心</span>
+        </h2>
+        <div class="member-grid" id="mainMembers">
+          <!-- AUTO:MAIN_MEMBERS:START -->
+          <article class="member-card">
+            <div class="member-avatar">
+              <img src="group/yen.jpg" alt="羽瞳的頭像" width="120" height="120" loading="lazy" decoding="async" />
+            </div>
+            <div class="member-info">
+              <h3 class="member-name">羽瞳 <span class="member-tag">團長</span></h3>
+              <p class="member-role"><i class="fa-solid fa-gamepad"></i> 主修：APEX / 怪物彈珠</p>
+              <p class="member-desc">放浪團的發起人，擅長打怪物彈珠，也擅長在 Discord跟Msg 裡發廢文。</p>
+            </div>
+          </article>
+          <article class="member-card">
+            <div class="member-avatar">
+              <img src="group/self.png" alt="子彈的頭像" width="120" height="120" loading="lazy" decoding="async" />
+            </div>
+            <div class="member-info">
+              <h3 class="member-name">子彈 <span class="member-tag">音遊擔當</span></h3>
+              <p class="member-role"><i class="fa-solid fa-music"></i> 主修：音遊 / FPS</p>
+              <p class="member-desc">團裡的音遊擔當，音遊實力堅強，各類音遊都有不錯的成績。 也是貓又おかゆ的粉絲，常常在尋找貓又おかゆ的最新消息。</p>
+            </div>
+          </article>
+          <article class="member-card">
+            <div class="member-avatar">
+              <img src="group/gary.png" alt="Gary的頭像" width="120" height="120" loading="lazy" decoding="async" />
+            </div>
+            <div class="member-info">
+              <h3 class="member-name">Gary <span class="member-tag">破風者</span></h3>
+              <p class="member-role"><i class="fa-solid fa-robot"></i> 主修：APEX / 崩鐵 / 攝影</p>
+              <p class="member-desc">團裡的破風者，喜歡騎車跟打遊戲，喜歡拍攝，說走就走的旅行家。</p>
+            </div>
+          </article>
+          <article class="member-card">
+            <div class="member-avatar">
+              <img src="group/liu.jpg" alt="天際的頭像" width="120" height="120" loading="lazy" decoding="async" />
+            </div>
+            <div class="member-info">
+              <h3 class="member-name">天際 <span class="member-tag">專題組長</span></h3>
+              <p class="member-role"><i class="fa-solid fa-face-smile"></i> 主修：戰略遊戲</p>
+              <p class="member-desc">喜歡玩各種戰略遊戲，尤其是即時戰略類型。常常在群組裡分享遊戲心得與攻略。</p>
+            </div>
+          </article>
+          <article class="member-card">
+            <div class="member-avatar">
+              <img src="group/lan.png" alt="Lanch的頭像" width="120" height="120" loading="lazy" decoding="async" />
+            </div>
+            <div class="member-info">
+              <h3 class="member-name">Lanch <span class="member-tag">氣氛擔當</span></h3>
+              <p class="member-role"><i class="fa-solid fa-moon"></i> 主修：講幹話</p>
+              <p class="member-desc">團裡的氣氛擔當，總是能在群組裡帶來歡笑。喜歡在遊戲中搞笑，也喜歡在語音頻道裡講幹話。</p>
+            </div>
+          </article>
+          <!-- AUTO:MAIN_MEMBERS:END -->
         </div>
 
-        <!-- 成員 5：Lanch -->
-        <div class="member-card">
-          <div class="member-avatar">
-            <img src="group/lan.png" alt="李公" />
-          </div>
-          <div class="member-info">
-            <h4 class="member-name">
-              Lanch <span class="member-tag">氣氛擔當</span>
-            </h4>
-            <p class="member-role">
-              <i class="fa-solid fa-moon"></i> 主修：講幹話
-            </p>
-            <p class="member-desc">
-              團裡的氣氛擔當，總是能在群組裡帶來歡笑。喜歡在遊戲中搞笑，也喜歡在語音頻道裡講幹話。
-            </p>
-          </div>
+        <!-- ===== 次級成員 ===== -->
+        <h2 class="section-subtitle">
+          <i class="fa-solid fa-leaf"></i> 次級成員
+          <span class="branch-tag">夥伴</span>
+        </h2>
+        <div class="member-grid" id="subMembers">
+          <!-- AUTO:SUB_MEMBERS:START -->
+          <article class="member-card sub-member">
+            <div class="member-avatar">
+              <img src="group/yin.webp" alt="影焰的頭像" width="120" height="120" loading="lazy" decoding="async" />
+            </div>
+            <div class="member-info">
+              <h3 class="member-name">影焰</h3>
+              <p class="member-role"><i class="fa-solid fa-tree"></i> 主修：遊戲王 / 怪物彈珠</p>
+              <p class="member-desc">喜歡玩各種卡牌遊戲，尤其是遊戲王。常常在群組裡分享卡牌心得與戰術。</p>
+            </div>
+          </article>
+          <article class="member-card sub-member">
+            <div class="member-avatar">
+              <img src="group/zhong.webp" alt="忠忠的頭像" width="120" height="120" loading="lazy" decoding="async" />
+            </div>
+            <div class="member-info">
+              <h3 class="member-name">忠忠</h3>
+              <p class="member-role"><i class="fa-solid fa-cat"></i> 主修：APEX / 原神</p>
+              <p class="member-desc">喜歡玩原神和APEX，常常在群組裡跟大家玩遊戲。</p>
+            </div>
+          </article>
+          <article class="member-card sub-member">
+            <div class="member-avatar">
+              <img src="group/kaine.webp" alt="小澪的頭像" width="120" height="120" loading="lazy" decoding="async" />
+            </div>
+            <div class="member-info">
+              <h3 class="member-name">小澪</h3>
+              <p class="member-role"><i class="fa-solid fa-moon"></i> 主修：瓦羅蘭 / 黑色沙漠</p>
+              <p class="member-desc">待補充...</p>
+            </div>
+          </article>
+          <article class="member-card sub-member">
+            <div class="member-avatar">
+              <img src="group/yi.jpg" alt="伊恆的頭像" width="120" height="120" loading="lazy" decoding="async" />
+            </div>
+            <div class="member-info">
+              <h3 class="member-name">伊恆</h3>
+              <p class="member-role"><i class="fa-solid fa-feather"></i> 主修：創作 / cos</p>
+              <p class="member-desc">待補充...</p>
+            </div>
+          </article>
+          <article class="member-card sub-member">
+            <div class="member-avatar">
+              <img src="group/xu.webp" alt="瑞峰的頭像" width="120" height="120" loading="lazy" decoding="async" />
+            </div>
+            <div class="member-info">
+              <h3 class="member-name">瑞峰</h3>
+              <p class="member-role"><i class="fa-solid fa-snowflake"></i> 主修：FPS</p>
+              <p class="member-desc">待補充...</p>
+            </div>
+          </article>
+          <article class="member-card sub-member">
+            <div class="member-avatar">
+              <img src="group/zhuo.jpg" alt="Zhuo的頭像" width="120" height="120" loading="lazy" decoding="async" />
+            </div>
+            <div class="member-info">
+              <h3 class="member-name">Zhuo</h3>
+              <p class="member-role"><i class="fa-solid fa-snowflake"></i> 主修：無</p>
+              <p class="member-desc">待補充...</p>
+            </div>
+          </article>
+          <!-- AUTO:SUB_MEMBERS:END -->
         </div>
-      </div>
+      </main>
 
-      <!-- ===== 次級成員 ===== -->
-      <h3 class="section-subtitle">
-        <i class="fa-solid fa-leaf"></i> 次級成員
-        <span class="branch-tag">夥伴</span>
-      </h3>
-      <div class="member-grid" id="subMembers">
-        <!-- 次級成員 1：影焰 -->
-        <div class="member-card sub-member">
-          <div class="member-avatar">
-            <img src="group/yin.webp" alt="影焰" />
-          </div>
-          <div class="member-info">
-            <h4 class="member-name">影焰</h4>
-            <p class="member-role">
-              <i class="fa-solid fa-tree"></i> 主修：遊戲王 / 怪物彈珠
-            </p>
-            <p class="member-desc">
-              喜歡玩各種卡牌遊戲，尤其是遊戲王。常常在群組裡分享卡牌心得與戰術。
-            </p>
-          </div>
-        </div>
-
-        <!-- 次級成員 2：忠忠 -->
-        <div class="member-card sub-member">
-          <div class="member-avatar">
-            <img src="group/zhong.webp" alt="忠忠" />
-          </div>
-          <div class="member-info">
-            <h4 class="member-name">忠忠</h4>
-            <p class="member-role">
-              <i class="fa-solid fa-cat"></i> 主修：APEX / 原神
-            </p>
-            <p class="member-desc">
-              喜歡玩原神和APEX，常常在群組裡跟大家玩遊戲。
-            </p>
-          </div>
-        </div>
-
-        <!-- 次級成員 3：小澪 -->
-        <div class="member-card sub-member">
-          <div class="member-avatar">
-            <img src="group/kaine.webp" alt="小澪" />
-          </div>
-          <div class="member-info">
-            <h4 class="member-name">小澪</h4>
-            <p class="member-role">
-              <i class="fa-solid fa-moon"></i> 主修：瓦羅蘭 / 黑色沙漠
-            </p>
-            <p class="member-desc">待補充...</p>
-          </div>
-        </div>
-
-        <!-- 次級成員 4：伊恆 -->
-        <div class="member-card sub-member">
-          <div class="member-avatar">
-            <img src="group/yi.jpg" alt="伊恆" />
-          </div>
-          <div class="member-info">
-            <h4 class="member-name">伊恆</h4>
-            <p class="member-role">
-              <i class="fa-solid fa-feather"></i> 主修：創作 / cos
-            </p>
-            <p class="member-desc">待補充...</p>
-          </div>
-        </div>
-
-        <!-- 次級成員 5：瑞峰 -->
-        <div class="member-card sub-member">
-          <div class="member-avatar">
-            <img src="group/xu.webp" alt="瑞峰" />
-          </div>
-          <div class="member-info">
-            <h4 class="member-name">瑞峰</h4>
-            <p class="member-role">
-              <i class="fa-solid fa-snowflake"></i> 主修：FPS
-            </p>
-            <p class="member-desc">待補充...</p>
-          </div>
-        </div>
-
-        <!-- 次級成員 6：Zhuo -->
-        <div class="member-card sub-member">
-          <div class="member-avatar">
-            <img src="group/zhuo.jpg" alt="Zhuo" />
-          </div>
-          <div class="member-info">
-            <h4 class="member-name">Zhuo</h4>
-            <p class="member-role">
-              <i class="fa-solid fa-snowflake"></i> 主修：無
-            </p>
-            <p class="member-desc">待補充...</p>
-          </div>
-        </div>
-
-        <!-- 預留空位（方便未來新增） 
-        <div class="member-card placeholder">
-          <div class="member-avatar">
-            <i class="fa-solid fa-plus"></i>
-          </div>
-          <div class="member-info">
-            <h4 class="member-name">等你加入</h4>
-            <p class="member-role">
-              <i class="fa-solid fa-heart"></i> もぐもぐ～
-            </p>
-            <p class="member-desc">
-              如果你也想成為放浪團的一員，歡迎聯絡我們！
-            </p>
-          </div>
-        </div>
-        -->
-      </div>
-
-      <footer>🍙 もぐもぐ～おかゆ～ 🐾 放浪團的神秘地帶</footer>
+      <footer>
+        <p>🍙 もぐもぐ～おかゆ～ 🐾 放浪團的神秘地帶</p>
+        <p class="footer-legal">© 2021–2026 CollapseHT. All rights reserved.</p>
+      </footer>
     </div>
-
-    <script>
-      const toggleBtn = document.getElementById("mobileMenu");
-      const navLinks = document.getElementById("navLinks");
-      if (toggleBtn) {
-        toggleBtn.addEventListener("click", () => {
-          navLinks.classList.toggle("show");
-        });
-      }
-    </script>
   </body>
 </html>
