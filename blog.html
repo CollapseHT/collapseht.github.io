@@ -1,111 +1,147 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
   <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=yes"
-    />
-    <title>子彈の貓窩 ‧ Blog</title>
-    <link rel="stylesheet" href="css/style.css" />
-    <link href="images/icon.png" rel="shortcut icon" />
-    <script src="js/script.js" defer></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>子彈の貓窩 ‧ 部落格 | CollapseHT</title>
+    <meta name="description" content="CollapseHT 的部落格雜談：網站更新紀錄、技術學習與 Hololive／貓又おかゆ 的日常筆記。" />
+    <meta name="author" content="CollapseHT" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#f3e6f8" />
+    <meta name="color-scheme" content="light" />
+    <link rel="canonical" href="https://collapseht.github.io/blog.html" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="子彈の貓窩" />
+    <meta property="og:title" content="子彈の貓窩 ‧ 部落格 | CollapseHT" />
+    <meta property="og:description" content="網站更新紀錄、技術學習與貓又おかゆ的日常筆記。" />
+    <meta property="og:url" content="https://collapseht.github.io/blog.html" />
+    <meta property="og:image" content="https://collapseht.github.io/images/og-cover.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="子彈の貓窩 ‧ CollapseHT 個人網站" />
+    <meta property="og:locale" content="zh_TW" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png" />
+    <link rel="manifest" href="site.webmanifest" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+    <link rel="stylesheet" href="css/style.css?v=3.1.0" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap"
     />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      />
+      <style>
+        #loading-screen {
+          display: none !important;
+        }
+      </style>
+    </noscript>
+    <script src="js/script.js?v=3.1.0" defer></script>
   </head>
   <body>
-    <!-- ===== 載入畫面 ===== -->
-    <div id="loading-screen">
+    <a class="skip-link" href="#main">跳至主要內容</a>
+
+    <div id="loading-screen" aria-hidden="true">
       <div class="loading-content">
-        <div class="loading-riceball">
-          <i class="fa-solid fa-cat"></i>
-        </div>
+        <div class="loading-riceball"><i class="fa-solid fa-cat"></i></div>
         <div class="loading-text">もぐもぐ...</div>
         <div class="loading-paws"><span>🐾</span> <span>🐾</span></div>
       </div>
     </div>
 
-    <div class="deco-emoji deco-1">🍙</div>
-    <div class="deco-emoji deco-2">🐾</div>
-    <div class="deco-emoji deco-3">📝</div>
-    <div class="deco-emoji deco-4">✨</div>
+    <div class="deco-emoji deco-1" aria-hidden="true">🍙</div>
+    <div class="deco-emoji deco-2" aria-hidden="true">🐾</div>
+    <div class="deco-emoji deco-3" aria-hidden="true">📝</div>
+    <div class="deco-emoji deco-4" aria-hidden="true">✨</div>
 
     <div class="container">
-      <nav class="navbar">
-        <div class="nav-brand">
+      <nav class="navbar" aria-label="網站主選單">
+        <a class="nav-brand" href="index.html">
           <i class="fa-solid fa-cat"></i> おかゆの隠れ家
-        </div>
+        </a>
         <ul class="nav-links" id="navLinks">
           <li>
             <a href="index.html"><i class="fa-solid fa-home"></i> 首頁</a>
           </li>
           <li>
-            <a href="update.html"
-              ><i class="fa-solid fa-clock-rotate-left"></i> 更新歷程</a
-            >
+            <a href="update.html"><i class="fa-solid fa-clock-rotate-left"></i> 更新歷程</a>
           </li>
           <li>
-            <a href="blog.html" class="active"
+            <a href="blog.html" class="active" aria-current="page"
               ><i class="fa-solid fa-blog"></i> 部落格</a
             >
           </li>
           <li>
-            <a href="game.html"><i class="fa-solid fa-gamepad"></i> 遊戲</a>
+            <a href="game.html"
+              ><i class="fa-solid fa-gamepad"></i> 遊戲</a
+            >
           </li>
           <li>
             <a href="group.html"><i class="fa-solid fa-users"></i> 放浪團</a>
           </li>
         </ul>
-        <div class="nav-toggle" id="mobileMenu">
+        <button
+          class="nav-toggle"
+          id="mobileMenu"
+          type="button"
+          aria-label="開啟導覽選單"
+          aria-expanded="false"
+          aria-controls="navLinks"
+        >
           <i class="fa-solid fa-bars"></i>
-        </div>
+        </button>
       </nav>
 
-      <div class="page-header">
-        <h2><i class="fa-solid fa-blog"></i> Blog ‧ 雜談筆記</h2>
-        <p>技術學習 · Hololive 日常 · 開發小記</p>
-      </div>
+      <main id="main">
+        <div class="page-header">
+          <h1><i class="fa-solid fa-blog"></i> Blog ‧ 雜談筆記</h1>
+          <p>技術學習 · Hololive 日常 · 開發小記</p>
+        </div>
 
-      <div class="blog-grid">
-        <!-- 文章 1（內文較長測試） -->
-        <article class="blog-card">
-          <div class="blog-image">
-            <i class="fa-solid fa-laptop-code"></i>
-          </div>
-          <div class="blog-content">
-            <h3 class="blog-title">個人網站大更新 3.0</h3>
-            <div class="blog-meta">
-              <span><i class="fa-regular fa-calendar-alt"></i> 2026.05.16</span>
-              <span><i class="fa-solid fa-tag"></i> 網站更新</span>
+        <div class="blog-grid">
+          <!-- 文章 1（內文較長測試） -->
+          <!-- AUTO:POSTS:START -->
+          <article class="blog-card">
+            <div class="blog-image" aria-hidden="true">
+              <i class="fa-solid fa-laptop-code"></i>
             </div>
-            <p class="blog-summary">
-              個人網站於113.4.24更新至2.0, 並放在github上持續更新託管到現在.<br />
-              直到115.5.15,網站再更新至3.0, 這次更新不只是簡化了網站的結構,
-              還加入了更多自己喜歡的元素, 以及一些功能上的改進.<br />
-            </p>
-          </div>
-        </article>
+            <div class="blog-content">
+              <h2 class="blog-title">個人網站大更新 3.0</h2>
+              <div class="blog-meta">
+                <span><i class="fa-regular fa-calendar-alt"></i> <time datetime="2026-05-16">2026.05.16</time></span>
+                <span><i class="fa-solid fa-tag"></i> 網站更新</span>
+              </div>
+              <p class="blog-summary">
+                個人網站於113.4.24更新至2.0, 並放在github上持續更新託管到現在.<br />直到115.5.15,網站再更新至3.0, 這次更新不只是簡化了網站的結構, 還加入了更多自己喜歡的元素, 以及一些功能上的改進.
+              </p>
+            </div>
+          </article>
+          <!-- AUTO:POSTS:END -->
 
-        <!-- 文章 2 -->
-      </div>
+          <!-- 文章 2 -->
+        </div>
+      </main>
 
-      <footer>🍙 もぐもぐ～おかゆ～ 🐾 持續更新中，歡迎隨時來逛逛</footer>
+      <footer>
+        <p>🍙 もぐもぐ～おかゆ～ 🐾 持續更新中，歡迎隨時來逛逛</p>
+        <p class="footer-legal">© 2021–2026 CollapseHT. All rights reserved.</p>
+      </footer>
     </div>
-
-    <script>
-      const toggleBtn = document.getElementById("mobileMenu");
-      const navLinks = document.getElementById("navLinks");
-      if (toggleBtn) {
-        toggleBtn.addEventListener("click", () => {
-          navLinks.classList.toggle("show");
-        });
-      }
-    </script>
   </body>
 </html>

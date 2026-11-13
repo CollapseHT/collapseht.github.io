@@ -1,270 +1,302 @@
-// ===== 載入畫面處理（保證最小顯示時間 + 淡出）=====
-const MIN_DISPLAY_MS = 500;
-const startTime = Date.now();
+/* =========================================================
+   子彈の貓窩 ‧ 共用前端腳本
+   載入畫面 / 導覽選單 / 時鐘 / 今日運勢 / 彩蛋
+   ========================================================= */
+(function () {
+  "use strict";
 
-function hideLoadingScreen() {
-  const loadingScreen = document.getElementById("loading-screen");
-  if (!loadingScreen) return;
-  loadingScreen.classList.add("fade-out");
-  const onTransitionEnd = () => {
-    loadingScreen.style.display = "none";
-    loadingScreen.removeEventListener("transitionend", onTransitionEnd);
-  };
-  loadingScreen.addEventListener("transitionend", onTransitionEnd);
-  setTimeout(() => {
-    if (loadingScreen.style.display !== "none") {
-      loadingScreen.style.display = "none";
+  var doc = document;
+  var reduceMotion = false;
+  try {
+    reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  } catch (e) {
+    reduceMotion = false;
+  }
+
+  /* ---------- 載入畫面 ---------- */
+  (function initLoadingScreen() {
+    var screen = doc.getElementById("loading-screen");
+    if (!screen) return;
+
+    var MIN_MS = 350;
+    var start = (window.performance && performance.now) ? performance.now() : Date.now();
+    var visited = false;
+    try {
+      visited = window.sessionStorage.getItem("mogumogu-visited") === "1";
+    } catch (e) {
+      visited = false; // 隱私模式下 sessionStorage 可能被封鎖
     }
-  }, 1200);
-}
 
-function tryHide() {
-  const elapsed = Date.now() - startTime;
-  const remaining = MIN_DISPLAY_MS - elapsed;
-  if (remaining <= 0) {
-    hideLoadingScreen();
-  } else {
-    setTimeout(hideLoadingScreen, remaining);
-  }
-}
+    function dismiss() {
+      screen.classList.add("fade-out");
+      var remove = function () {
+        screen.style.display = "none";
+        screen.setAttribute("aria-hidden", "true");
+      };
+      screen.addEventListener("transitionend", remove, { once: true });
+      window.setTimeout(remove, 700);
+    }
 
-if (document.readyState === "complete") {
-  tryHide();
-} else {
-  window.addEventListener("load", tryHide);
-}
+    function afterLoad() {
+      try {
+        window.sessionStorage.setItem("mogumogu-visited", "1");
+      } catch (e) {
+        /* 忽略 */
+      }
+      if (visited || reduceMotion) {
+        dismiss();
+        return;
+      }
+      var elapsed = ((window.performance && performance.now) ? performance.now() : Date.now()) - start;
+      var wait = Math.max(0, MIN_MS - elapsed);
+      if (wait === 0) dismiss();
+      else window.setTimeout(dismiss, wait);
+    }
 
-// ===== 可愛的淡入淡出提示元件 =====
-function showToast(message) {
-  // 如果已經有 toast 存在，先移除避免重複
-  const existingToast = document.querySelector(".cute-toast");
-  if (existingToast) existingToast.remove();
+    if (doc.readyState === "complete") afterLoad();
+    else window.addEventListener("load", afterLoad, { once: true });
+  })();
 
-  const toast = document.createElement("div");
-  toast.className = "cute-toast";
-  toast.innerHTML = `
-        <div class="toast-icon">🐾</div>
-        <div class="toast-message">${message}</div>
-        <div class="toast-icon">🍙</div>
-    `;
-  document.body.appendChild(toast);
+  /* ---------- 導覽選單 ---------- */
+  (function initNav() {
+    var toggle = doc.getElementById("mobileMenu");
+    var links = doc.getElementById("navLinks");
+    if (!toggle || !links) return;
 
-  // 強制重繪以觸發動畫
-  toast.offsetHeight;
-  toast.classList.add("show");
+    function setOpen(open) {
+      links.classList.toggle("show", open);
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      toggle.setAttribute("aria-label", open ? "關閉導覽選單" : "開啟導覽選單");
+    }
 
-  // 3 秒後淡出移除
-  setTimeout(() => {
-    toast.classList.remove("show");
-    setTimeout(() => {
-      if (toast.parentNode) toast.parentNode.removeChild(toast);
-    }, 300);
-  }, 2500);
-}
+    toggle.addEventListener("click", function (event) {
+      event.stopPropagation();
+      setOpen(!links.classList.contains("show"));
+    });
 
-// ===== 防右鍵 + 防組合鍵，並顯示可愛提示 =====
-document.addEventListener("contextmenu", function (e) {
-  e.preventDefault();
-  showToast("もぐもぐ～不能偷看喔 🐾");
-  return false;
-});
+    links.addEventListener("click", function (event) {
+      if (event.target.closest("a")) setOpen(false);
+    });
 
-document.addEventListener("keydown", function (e) {
-  let blocked = false;
-  let toastMsg = "もぐもぐ～不行喔 🍙";
+    doc.addEventListener("click", function (event) {
+      if (!links.classList.contains("show")) return;
+      if (links.contains(event.target) || toggle.contains(event.target)) return;
+      setOpen(false);
+    });
 
-  if (e.key === "F12") {
-    blocked = true;
-    toastMsg = "🐾 F12 被封印了～もぐもぐ";
-  } else if (
-    (e.ctrlKey || e.metaKey) &&
-    e.shiftKey &&
-    (e.key === "I" || e.key === "i")
-  ) {
-    blocked = true;
-    toastMsg = "🐾 開發者工具不能開喔！";
-  } else if (
-    (e.ctrlKey || e.metaKey) &&
-    e.shiftKey &&
-    (e.key === "J" || e.key === "j")
-  ) {
-    blocked = true;
-    toastMsg = "🐾 コンソールは見れません～";
-  } else if ((e.ctrlKey || e.metaKey) && (e.key === "U" || e.key === "u")) {
-    blocked = true;
-    toastMsg = "🍙 原始碼是秘密～もぐもぐ";
-  } else if ((e.ctrlKey || e.metaKey) && (e.key === "S" || e.key === "s")) {
-    blocked = true;
-    toastMsg = "📄 儲存功能暫時不開放～";
-  } else if (
-    (e.ctrlKey || e.metaKey) &&
-    e.shiftKey &&
-    (e.key === "C" || e.key === "c")
-  ) {
-    blocked = true;
-    toastMsg = "✨ 元素檢視器休息中～";
+    doc.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && links.classList.contains("show")) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+
+    window.addEventListener("resize", function () {
+      if (window.innerWidth > 680 && links.classList.contains("show")) setOpen(false);
+    });
+  })();
+
+  /* ---------- 時鐘 ---------- */
+  var CLOCK_IDS = ["liveClock", "liveClockEnhanced"];
+  var CLOCK_MESSAGES = [
+    [6, "🌙 夜深了，早點休息～"],
+    [11, "🍙 おはよう！早餐吃個飯糰吧"],
+    [14, "🍱 午餐時間～もぐもぐ"],
+    [18, "🍵 下午茶，來點小粥的歌"],
+    [22, "🎮 晚上一起打遊戲！"]
+  ];
+
+  function clockMessage(hour) {
+    for (var i = 0; i < CLOCK_MESSAGES.length; i++) {
+      if (hour < CLOCK_MESSAGES[i][0]) return CLOCK_MESSAGES[i][1];
+    }
+    return "🐾 もぐもぐ～晚安～";
   }
 
-  if (blocked) {
-    e.preventDefault();
-    showToast(toastMsg);
-    return false;
-  }
-});
+  function updateClocks() {
+    var now = new Date();
+    var time = now.toLocaleTimeString("zh-TW", { hour12: false });
+    var message = clockMessage(now.getHours());
 
-// ===== 貓掌按鈕互動 (音效 + 視覺回饋) =====
-document.addEventListener("DOMContentLoaded", () => {
-  const pawButton = document.getElementById("clickablePaw");
-  if (pawButton) {
-    pawButton.addEventListener("click", () => {
-      const audio = new Audio("images/secret.mp3");
-      audio.volume = 0.3;
-      audio.play().catch((e) => console.log("音效播放失敗：", e));
-      const originalHTML = pawButton.innerHTML;
-      pawButton.innerHTML =
-        '<i class="fa-solid fa-heart"></i> もぐもぐ！ <i class="fa-solid fa-heart"></i>';
-      setTimeout(() => {
-        pawButton.innerHTML = originalHTML;
-      }, 3000);
+    for (var i = 0; i < CLOCK_IDS.length; i++) {
+      var el = doc.getElementById(CLOCK_IDS[i]);
+      if (el) el.textContent = time;
+    }
+    var msgEl = doc.getElementById("clockMessageEnhanced");
+    if (msgEl) msgEl.textContent = message;
+    var msgElBasic = doc.getElementById("clockMessage");
+    if (msgElBasic) msgElBasic.textContent = message.replace(/^[^\s]+\s/, "");
+  }
+
+  updateClocks();
+  window.setInterval(function () {
+    if (!doc.hidden) updateClocks();
+  }, 1000);
+
+  /* ---------- 今日運勢（同一天固定） ---------- */
+  function dailyFortune() {
+    var today = new Date();
+    var seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+
+    // 以日期為種子的穩定亂數（mulberry32 變體）
+    function random(salt) {
+      var t = (seed + salt * 0x9e3779b9) >>> 0;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    }
+
+    var levels = [
+      { name: "🌸 大吉", weight: 1 },
+      { name: "🍙 中吉", weight: 2 },
+      { name: "🐾 小吉", weight: 3 },
+      { name: "🍵 末吉", weight: 2 },
+      { name: "🌙 凶", weight: 1 }
+    ];
+
+    var total = 0;
+    for (var i = 0; i < levels.length; i++) total += levels[i].weight;
+    var roll = random(1) * total;
+    var level = levels[0];
+    for (var j = 0; j < levels.length; j++) {
+      if (roll < levels[j].weight) {
+        level = levels[j];
+        break;
+      }
+      roll -= levels[j].weight;
+    }
+
+    var fortunes = {
+      "🌸 大吉": {
+        text: "今天非常幸運！你的笑容會感染身邊的人。",
+        item: "飯糰 (吃到就是福氣)",
+        color: "紫色 / 金色",
+        advice: "もぐもぐ～今天適合主動出擊喔！"
+      },
+      "🍙 中吉": {
+        text: "平穩中帶點小驚喜，適合嘗試新事物。",
+        item: "貓掌小吊飾",
+        color: "粉紫色",
+        advice: "おかゆと一緒に頑張ろう～"
+      },
+      "🐾 小吉": {
+        text: "小小幸運藏在日常裡，留心觀察。",
+        item: "溫熱的茶",
+        color: "淺紫色",
+        advice: "もぐもぐ～慢慢來也沒關係的。"
+      },
+      "🍵 末吉": {
+        text: "稍有波折，但結局會是好的。",
+        item: "糖果",
+        color: "薰衣草色",
+        advice: "累了就休息一下，もぐもぐ～"
+      },
+      "🌙 凶": {
+        text: "可能遇到小挫折，轉換心情很重要。",
+        item: "軟綿綿的枕頭",
+        color: "深紫色",
+        advice: "明天會更好，今天もぐもぐ放鬆吧～"
+      }
+    };
+
+    var f = fortunes[level.name];
+    return { level: level.name, text: f.text, item: f.item, color: f.color, advice: f.advice };
+  }
+
+  (function initFortune() {
+    var levelEl = doc.getElementById("fortuneLevel");
+    if (!levelEl) return;
+    var fortune = dailyFortune();
+    var map = {
+      fortuneLevel: fortune.level,
+      fortuneText: fortune.text,
+      fortuneItem: fortune.item,
+      fortuneColor: fortune.color,
+      fortuneAdvice: fortune.advice
+    };
+    Object.keys(map).forEach(function (id) {
+      var el = doc.getElementById(id);
+      if (el) el.textContent = map[id];
+    });
+  })();
+
+  /* ---------- 提示泡泡 ---------- */
+  var toastTimer = null;
+  function showToast(message) {
+    var existing = doc.querySelector(".cute-toast");
+    if (existing) existing.remove();
+    if (toastTimer) window.clearTimeout(toastTimer);
+
+    var toast = doc.createElement("div");
+    toast.className = "cute-toast";
+    toast.setAttribute("role", "status");
+
+    var iconLeft = doc.createElement("div");
+    iconLeft.className = "toast-icon";
+    iconLeft.textContent = "🐾";
+
+    var text = doc.createElement("div");
+    text.className = "toast-message";
+    text.textContent = message;
+
+    var iconRight = doc.createElement("div");
+    iconRight.className = "toast-icon";
+    iconRight.textContent = "🍙";
+
+    toast.appendChild(iconLeft);
+    toast.appendChild(text);
+    toast.appendChild(iconRight);
+    doc.body.appendChild(toast);
+
+    void toast.offsetHeight; // 強制重繪以觸發動畫
+    toast.classList.add("show");
+
+    toastTimer = window.setTimeout(function () {
+      toast.classList.remove("show");
+      window.setTimeout(function () {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 300);
+    }, 2200);
+  }
+
+  /* ---------- 右鍵小提醒（可於此關閉） ---------- */
+  var PLAYFUL_CONTEXT_TOAST = true;
+  if (PLAYFUL_CONTEXT_TOAST) {
+    doc.addEventListener("contextmenu", function (event) {
+      var target = event.target;
+      if (target && (target.closest("input, textarea, select, [contenteditable]") || target.closest(".no-guard"))) {
+        return;
+      }
+      event.preventDefault();
+      showToast("もぐもぐ～不能偷看喔 🐾");
     });
   }
-});
 
-// ===== 時鐘功能 =====
-function updateClock() {
-  const clockEl = document.getElementById("liveClock");
-  if (clockEl) {
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString("zh-TW");
-    clockEl.innerText = timeStr;
-    const hour = now.getHours();
-    let msg = "もぐもぐ～おかゆ～";
-    if (hour < 6) msg = "夜深了，早點休息～";
-    else if (hour < 11) msg = "おはよう～早餐想吃飯糰嗎？";
-    else if (hour < 14) msg = "午餐時間！もぐもぐ～";
-    else if (hour < 18) msg = "下午茶來個飯糰吧🍙";
-    else if (hour < 22) msg = "晚上好，一起打遊戲🎮";
-    else msg = "もぐもぐ～晚安～";
-    const msgEl = document.getElementById("clockMessage");
-    if (msgEl) msgEl.innerText = msg;
-  }
-}
-updateClock();
-setInterval(updateClock, 1000);
+  /* ---------- 貓掌小彩蛋 ---------- */
+  (function initPaw() {
+    var paw = doc.getElementById("clickablePaw");
+    if (!paw) return;
 
-function updateEnhancedClock() {
-  const clockEnhanced = document.getElementById("liveClockEnhanced");
-  if (clockEnhanced) {
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString("zh-TW", { hour12: false });
-    clockEnhanced.innerText = timeStr;
-    const hour = now.getHours();
-    let msg = "もぐもぐ～おかゆ～";
-    if (hour < 6) msg = "🌙 夜深了，早點休息～";
-    else if (hour < 11) msg = "🍙 おはよう！早餐吃個飯糰吧";
-    else if (hour < 14) msg = "🍱 午餐時間～もぐもぐ";
-    else if (hour < 18) msg = "🍵 下午茶，來點小粥的歌";
-    else if (hour < 22) msg = "🎮 晚上一起打遊戲！";
-    else msg = "🐾 もぐもぐ～晚安～";
-    const msgEnhanced = document.getElementById("clockMessageEnhanced");
-    if (msgEnhanced) msgEnhanced.innerText = msg;
-  }
-}
-updateEnhancedClock();
-setInterval(updateEnhancedClock, 1000);
+    var audio = null;
+    paw.addEventListener("click", function () {
+      if (!audio) {
+        audio = new Audio("images/secret.mp3");
+        audio.volume = 0.3;
+      }
+      var playing = audio.play();
+      if (playing && typeof playing.catch === "function") playing.catch(function () {});
 
-// ===== 今日運勢（基於日期固定）=====
-function getDailyFortune() {
-  const today = new Date();
-  const seed =
-    today.getFullYear() * 10000 +
-    (today.getMonth() + 1) * 100 +
-    today.getDate();
-  // 簡單的偽隨機函數
-  const rnd = (max) => {
-    const x = Math.sin(seed) * 10000 + seed;
-    const r = (x - Math.floor(x)) * max;
-    return Math.floor(r);
-  };
+      if (paw.dataset.busy === "1") return;
+      paw.dataset.busy = "1";
+      var original = paw.innerHTML;
+      paw.innerHTML = '<i class="fa-solid fa-heart"></i> もぐもぐ！ <i class="fa-solid fa-heart"></i>';
+      window.setTimeout(function () {
+        paw.innerHTML = original;
+        paw.dataset.busy = "0";
+      }, 3000);
+    });
+  })();
 
-  const levels = [
-    { name: "🌸 大吉", weight: 1 },
-    { name: "🍙 中吉", weight: 2 },
-    { name: "🐾 小吉", weight: 3 },
-    { name: "🍵 末吉", weight: 2 },
-    { name: "🌙 凶", weight: 1 },
-  ];
-  // 根據權重抽取
-  let totalWeight = levels.reduce((sum, l) => sum + l.weight, 0);
-  let rand = rnd(totalWeight);
-  let levelObj = levels[0];
-  for (let l of levels) {
-    if (rand < l.weight) {
-      levelObj = l;
-      break;
-    }
-    rand -= l.weight;
-  }
-  const level = levelObj.name;
-
-  // 對應內容庫
-  const fortunes = {
-    "🌸 大吉": {
-      text: "今天非常幸運！你的笑容會感染身邊的人。",
-      item: "飯糰 (吃到就是福氣)",
-      color: "紫色 / 金色",
-      advice: "もぐもぐ～今天適合主動出擊喔！",
-    },
-    "🍙 中吉": {
-      text: "平穩中帶點小驚喜，適合嘗試新事物。",
-      item: "貓掌小吊飾",
-      color: "粉紫色",
-      advice: "おかゆと一緒に頑張ろう～",
-    },
-    "🐾 小吉": {
-      text: "小小幸運藏在日常裡，留心觀察。",
-      item: "溫熱的茶",
-      color: "淺紫色",
-      advice: "もぐもぐ～慢慢來也沒關係的。",
-    },
-    "🍵 末吉": {
-      text: "稍有波折，但結局會是好的。",
-      item: "糖果",
-      color: "薰衣草色",
-      advice: "累了就休息一下，もぐもぐ～",
-    },
-    "🌙 凶": {
-      text: "可能遇到小挫折，轉換心情很重要。",
-      item: "軟綿綿的枕頭",
-      color: "深紫色",
-      advice: "明天會更好，今天もぐもぐ放鬆吧～",
-    },
-  };
-
-  const f = fortunes[level];
-  return {
-    level: level,
-    text: f.text,
-    item: f.item,
-    color: f.color,
-    advice: f.advice,
-  };
-}
-
-function displayFortune() {
-  const fortune = getDailyFortune();
-  const levelEl = document.getElementById("fortuneLevel");
-  const textEl = document.getElementById("fortuneText");
-  const itemEl = document.getElementById("fortuneItem");
-  const colorEl = document.getElementById("fortuneColor");
-  const adviceEl = document.getElementById("fortuneAdvice");
-
-  if (levelEl) levelEl.innerText = fortune.level;
-  if (textEl) textEl.innerText = fortune.text;
-  if (itemEl) itemEl.innerText = fortune.item;
-  if (colorEl) colorEl.innerText = fortune.color;
-  if (adviceEl) adviceEl.innerText = fortune.advice;
-}
-
-// 執行顯示運勢
-displayFortune();
+  // 供其他頁面或除錯使用
+  window.showToast = showToast;
+})();
