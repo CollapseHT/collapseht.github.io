@@ -13,7 +13,7 @@
   var FILES = { update: "update.html", blog: "blog.html", group: "group.html" };
   var LABELS = { update: "更新歷程", blog: "部落格", group: "放浪團" };
   var SECTION_FILE = { updates: "update", posts: "blog", group: "group" };
-  var LIST_SECTION = { updates: "updates", posts: "posts", news: "group", main: "group", sub: "group" };
+  var LIST_SECTION = { updates: "updates", posts: "posts", news: "group", groupPosts: "group", main: "group", sub: "group" };
   var ROLES = {
     owner: { label: "擁有者", sections: ["updates", "posts", "group"] },
     editor: { label: "內容編輯", sections: ["updates", "posts", "group"] },
@@ -473,9 +473,32 @@
     return html;
   }
 
+  function renderGroupPostItem(post, index, total) {
+    var field = "group.posts." + index;
+    var media = '<img class="featured-preview" src="' + esc(post.image ? previewUrl(post.image) : "") + '" alt="" style="' + (post.image ? "" : "visibility:hidden") + '" onerror="this.style.visibility=\'hidden\'">' +
+      '<p class="hint">封面可留空；沒有封面時前台會顯示圖示。</p>';
+    return '<div class="item">' +
+      '<div class="item-head"><span class="idx">' + pad2(index + 1) + "</span>" +
+      '<span class="item-title">' + esc(post.title || "（未命名投稿）") + "</span>" +
+      '<div class="item-actions">' + moveButtons("groupPosts", index, total) + removeButton("groupPosts", index) + "</div></div>" +
+      media +
+      '<div class="row" style="margin-bottom:8px"><label class="btn small upload-btn">上傳封面<input type="file" accept="image/*" data-upload="' + field + '.image"></label>' +
+      '<span class="hint">會壓縮成 WebP（最長邊 1200px），儲存時一併上傳到 group/posts/。</span></div>' +
+      '<div class="grid-2">' +
+      '<label class="span-2"><span>標題</span><input type="text" data-path="' + field + '.title" value="' + esc(post.title) + '"></label>' +
+      '<label><span>日期</span><input type="date" data-path="' + field + '.date" value="' + esc(post.date) + '"></label>' +
+      '<label><span>作者</span><input type="text" data-path="' + field + '.author" value="' + esc(post.author) + '" placeholder="團員名稱"></label>' +
+      '<label><span>分類</span><input type="text" data-path="' + field + '.category" value="' + esc(post.category) + '" placeholder="日常 / 遊戲 / 公告"></label>' +
+      '<label><span>圖示（沒有封面時顯示）</span><select data-path="' + field + '.icon">' + iconOptions(POST_ICONS, post.icon) + "</select></label>" +
+      '<label class="span-2"><span>封面圖片路徑</span><input type="text" data-path="' + field + '.image" value="' + esc(post.image) + '" placeholder="group/posts/xxx.webp"></label>' +
+      '<label class="span-2"><span>內容 / 摘要（換行會顯示為換行）</span><textarea rows="4" data-path="' + field + '.summary">' + esc(post.summary) + "</textarea></label>" +
+      "</div></div>";
+  }
+
   function renderGroupPanel() {
     var group = state.data.group;
-    var html = '<div class="panel-head"><div><h2>放浪團</h2><p>團體簡介、精選圖片、近況與成員名單都在 group.html。</p></div></div>';
+    var posts = group.posts || [];
+    var html = '<div class="panel-head"><div><h2>放浪團</h2><p>團體簡介、精選圖片、近況、團員投稿與成員名單都在 group.html。</p></div></div>';
     html += '<div class="item"><h3>團體簡介</h3><label><span>簡介（換行會顯示為換行）</span><textarea rows="4" data-path="group.intro">' + esc(group.intro) + "</textarea></label></div>";
     html += '<div class="item"><h3>精選圖片與文字</h3>' +
       '<img class="featured-preview" src="' + esc(previewUrl(group.featured.image)) + '" alt="" onerror="this.style.visibility=\'hidden\'">' +
@@ -491,6 +514,10 @@
       '<button class="btn primary small" type="button" data-action="add-news">＋ 新增近況</button></div>';
     if (!group.news.length) html += '<div class="item hint">目前沒有近況。</div>';
     group.news.forEach(function (item, index) { html += renderNewsItem(item, index, group.news.length); });
+    html += '<div class="panel-head"><div><h2>團員投稿</h2><p>放浪團的 Blog 區塊，支援封面圖片；朋友也能新增。</p></div>' +
+      '<button class="btn primary small" type="button" data-action="add-group-post">＋ 新增投稿</button></div>';
+    if (!posts.length) html += '<div class="item hint">目前沒有投稿。</div>';
+    posts.forEach(function (post, index) { html += renderGroupPostItem(post, index, posts.length); });
     html += renderMembersSection("main", "主要成員", "顯示在「主要成員」區塊，卡片會稍微強調。");
     html += renderMembersSection("sub", "次級成員", "顯示在「次級成員」區塊，樣式較柔和。");
     return html;
@@ -503,7 +530,7 @@
     if (canEdit("group")) $('[data-panel="group"]').innerHTML = renderGroupPanel();
     el.countUpdates.textContent = String(state.data.updates.length);
     el.countPosts.textContent = String(state.data.posts.length);
-    el.countGroup.textContent = String(state.data.group.main.length + state.data.group.sub.length);
+    el.countGroup.textContent = String(state.data.group.main.length + state.data.group.sub.length + (state.data.group.posts || []).length);
   }
 
   function activateTab(name) {
@@ -594,7 +621,8 @@
       setBusy(true, "處理圖片…");
       var maxSize = /avatar$/.test(fieldPath) ? 640 : 1200;
       var result = await compressImage(file, maxSize);
-      var path = "group/up-" + stampCompact() + "-" + randomSuffix() + "." + result.ext;
+      var folder = /^group\.posts\./.test(fieldPath) ? "group/posts/" : "group/";
+      var path = folder + "up-" + stampCompact() + "-" + randomSuffix() + "." + result.ext;
       var base64 = await blobToBase64(result.blob);
       if (state.uploads[path] && state.uploads[path].url) URL.revokeObjectURL(state.uploads[path].url);
       state.uploads[path] = {
@@ -649,6 +677,7 @@
     if (name === "updates") return state.data.updates;
     if (name === "posts") return state.data.posts;
     if (name === "news") return state.data.group.news;
+    if (name === "groupPosts") return state.data.group.posts;
     if (name === "main") return state.data.group.main;
     if (name === "sub") return state.data.group.sub;
     return [];
@@ -685,7 +714,7 @@
         if (label) label.textContent = event.target.value || "尚未設定頭像";
       }
     }
-    if (path === "group.featured.image") {
+    if (/\.image$/.test(path)) {
       var item = event.target.closest(".item");
       var preview = item ? item.querySelector(".featured-preview") : null;
       if (preview) { preview.style.visibility = ""; preview.src = previewUrl(event.target.value); }
@@ -701,7 +730,7 @@
     var focusPath = "";
     var requiredSection = action === "add-update" ? "updates"
       : action === "add-post" ? "posts"
-      : (action === "add-news" || action === "add-main" || action === "add-sub" || action === "toggle-member") ? "group"
+      : (action === "add-news" || action === "add-main" || action === "add-sub" || action === "toggle-member" || action === "add-group-post") ? "group"
       : (listName ? LIST_SECTION[listName] : "");
     if (requiredSection && !canEdit(requiredSection)) return;
 
@@ -714,6 +743,9 @@
     } else if (action === "add-news") {
       state.data.group.news.unshift({ date: todayISO(), tag: "更新", text: "" });
       focusPath = "group.news.0.text";
+    } else if (action === "add-group-post") {
+      state.data.group.posts.unshift({ date: todayISO(), title: "新投稿", author: "", category: "日常", icon: "pen-nib", image: "", summary: "" });
+      focusPath = "group.posts.0.title";
     } else if (action === "add-main" || action === "add-sub") {
       var target = action === "add-main" ? "main" : "sub";
       state.data.group[target].push({ name: "新成員", tag: "", roleIcon: "star", role: "", desc: "", avatar: "images/self.png" });

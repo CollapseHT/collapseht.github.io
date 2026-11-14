@@ -16,6 +16,7 @@
     groupIntro: ["<!-- AUTO:GROUP_INTRO:START -->", "<!-- AUTO:GROUP_INTRO:END -->"],
     featured: ["<!-- AUTO:FEATURED:START -->", "<!-- AUTO:FEATURED:END -->"],
     news: ["<!-- AUTO:GROUP_NEWS:START -->", "<!-- AUTO:GROUP_NEWS:END -->"],
+    groupPosts: ["<!-- AUTO:GROUP_POSTS:START -->", "<!-- AUTO:GROUP_POSTS:END -->"],
     mainMembers: ["<!-- AUTO:MAIN_MEMBERS:START -->", "<!-- AUTO:MAIN_MEMBERS:END -->"],
     subMembers: ["<!-- AUTO:SUB_MEMBERS:START -->", "<!-- AUTO:SUB_MEMBERS:END -->"]
   };
@@ -158,6 +159,29 @@
     });
   }
 
+  function parseGroupPosts(html) {
+    var region = getRegion(html, "groupPosts");
+    var chunks = region.split('<article class="blog-card group-post">').slice(1);
+    return chunks.map(function (chunk) {
+      var title = /<h3 class="blog-title">([\s\S]*?)<\/h3>/.exec(chunk);
+      var date = /<time datetime="([^"]*)"/.exec(chunk);
+      var author = /<span><i class="fa-solid fa-user"><\/i>\s*([\s\S]*?)<\/span>/.exec(chunk);
+      var category = /<span><i class="fa-solid fa-tag"><\/i>\s*([\s\S]*?)<\/span>/.exec(chunk);
+      var icon = /<div class="blog-image"[^>]*>\s*<i class="fa-solid fa-([\w-]+)"><\/i>/.exec(chunk);
+      var image = /<div class="blog-image[^"]*"[^>]*>\s*<img[^>]*src="([^"]*)"/.exec(chunk);
+      var summary = /<p class="blog-summary">([\s\S]*?)<\/p>/.exec(chunk);
+      return {
+        title: title ? textOf(title[1]) : "",
+        date: date ? date[1] : "",
+        author: author ? textOf(author[1]) : "",
+        category: category ? textOf(category[1]) : "",
+        icon: icon ? icon[1] : "pen-nib",
+        image: image ? image[1] : "",
+        summary: summary ? textOf(summary[1]) : ""
+      };
+    });
+  }
+
   function parseMembers(html, name) {
     var region = getRegion(html, name);
     var chunks = region.split('<article class="member-card').slice(1);
@@ -189,6 +213,7 @@
         intro: textOf(getRegion(files.group, "groupIntro")),
         featured: parseFeatured(files.group),
         news: parseNews(files.group),
+        posts: parseGroupPosts(files.group),
         main: parseMembers(files.group, "mainMembers"),
         sub: parseMembers(files.group, "subMembers")
       }
@@ -258,6 +283,29 @@
     }).join("\n");
   }
 
+  function renderGroupPosts(list) {
+    if (!list || !list.length) {
+      return '            <p class="group-post-empty">目前還沒有投稿，快來分享有趣的事！</p>';
+    }
+    return list.map(function (post) {
+      var media = post.image
+        ? '<div class="blog-image group-post-image"><img src="' + esc(post.image) + '" alt="' + esc(post.title) + '" loading="lazy" decoding="async" /></div>'
+        : '<div class="blog-image" aria-hidden="true"><i class="fa-solid fa-' + esc(post.icon || "pen-nib") + '"></i></div>';
+      return '            <article class="blog-card group-post">\n' +
+        '              ' + media + '\n' +
+        '              <div class="blog-content">\n' +
+        '                <h3 class="blog-title">' + esc(post.title) + '</h3>\n' +
+        '                <div class="blog-meta">\n' +
+        '                  <span><i class="fa-regular fa-calendar-alt"></i> <time datetime="' + esc(post.date) + '">' + dotted(post.date) + '</time></span>\n' +
+        '                  <span><i class="fa-solid fa-user"></i> ' + esc(post.author) + '</span>\n' +
+        '                  <span><i class="fa-solid fa-tag"></i> ' + esc(post.category) + '</span>\n' +
+        '                </div>\n' +
+        '                <p class="blog-summary">' + nl2br(post.summary) + '</p>\n' +
+        '              </div>\n' +
+        '            </article>';
+    }).join("\n");
+  }
+
   function renderMembers(list, isSub) {
     var cardClass = isSub ? "member-card sub-member" : "member-card";
     return (list || []).map(function (m) {
@@ -283,6 +331,7 @@
         var html = setRegion(files.group, "groupIntro", renderIntro(data.group.intro));
         html = setRegion(html, "featured", renderFeatured(data.group.featured));
         html = setRegion(html, "news", renderNews(data.group.news));
+        html = setRegion(html, "groupPosts", renderGroupPosts(data.group.posts));
         html = setRegion(html, "mainMembers", renderMembers(data.group.main, false));
         html = setRegion(html, "subMembers", renderMembers(data.group.sub, true));
         return html;
@@ -306,6 +355,11 @@
       if (!n.date) errors.push("放浪團近況第 " + (i + 1) + " 則缺少日期");
       if (!n.text || !n.text.trim()) errors.push("放浪團近況第 " + (i + 1) + " 則缺少內容");
     });
+    (g.posts || []).forEach(function (p, i) {
+      if (!p.title || !p.title.trim()) errors.push("團員投稿第 " + (i + 1) + " 篇缺少標題");
+      if (!p.date) errors.push("團員投稿第 " + (i + 1) + " 篇缺少日期");
+      if (!p.author || !p.author.trim()) errors.push("團員投稿第 " + (i + 1) + " 篇缺少作者");
+    });
     (g.main || []).concat(g.sub || []).forEach(function (m, i) {
       if (!m.name || !m.name.trim()) errors.push("成員第 " + (i + 1) + " 位缺少名字");
     });
@@ -324,6 +378,7 @@
     renderIntro: renderIntro,
     renderFeatured: renderFeatured,
     renderNews: renderNews,
+    renderGroupPosts: renderGroupPosts,
     renderMembers: renderMembers
   };
 });

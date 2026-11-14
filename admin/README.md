@@ -115,12 +115,14 @@
 - 團體簡介
 - 精選圖片路徑、替代文字、標題、說明
 - 放浪團近況（日期 / 類型 / 內容）
+- 團員投稿（標題 / 日期 / 作者 / 分類 / 圖示 / 封面圖 / 內容），可新增、刪除、上下排序
 - 主要成員、次級成員：名字、標籤、頭像路徑、主修圖示、主修、介紹
 - 成員可以上下排序、在主要 / 次級之間移動、新增、刪除
 
-圖片可以直接上傳：成員頭像與精選圖片旁有「上傳圖片」按鈕。
-上傳後瀏覽器會壓縮成 WebP（頭像最長邊 640px、精選圖 1200px），
-儲存時跟 HTML 一起 commit 到 group/up-....webp；本機模式則直接寫入資料夾。
+圖片可以直接上傳：成員頭像、精選圖片與投稿封面旁都有上傳按鈕。
+上傳後瀏覽器會壓縮成 WebP（頭像 640px、封面 1200px），
+成員與精選圖存到 group/up-....webp，投稿封面存到 group/posts/up-....webp；
+儲存時跟 HTML 一起 commit，本機模式則直接寫入資料夾。
 
 也可以手動填路徑，例如 group/yen.jpg；支援 .jpg、.png、.webp。
 
@@ -137,6 +139,7 @@
 | AUTO:GROUP_INTRO | group.html 的團體簡介 |
 | AUTO:FEATURED | group.html 的精選圖片與文字 |
 | AUTO:GROUP_NEWS | group.html 的近況時間軸 |
+| AUTO:GROUP_POSTS | group.html 的團員投稿卡片 |
 | AUTO:MAIN_MEMBERS | group.html 的主要成員卡片 |
 | AUTO:SUB_MEMBERS | group.html 的次級成員卡片 |
 
