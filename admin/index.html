@@ -37,7 +37,7 @@
         <div class="card">
           <h1>內容管理後台</h1>
           <p class="lead">
-            在這裡修改「更新歷程」、「部落格」與「放浪團」的內容。儲存後會直接 commit 到 GitHub，
+            在這裡修改「更新歷程」、「部落格」與「放浪團」的內容。儲存後會依權限直接 commit 或建立 Pull Request，
             GitHub Pages 大約 1 分鐘後更新前台。
           </p>
 
@@ -66,7 +66,7 @@
           <div class="grid-2">
             <label>
               <span>權限模式</span>
-              <select id="roleInput">
+              <select id="roleInput" disabled>
                 <option value="owner">擁有者（全部內容，可發布到 main）</option>
                 <option value="editor">內容編輯（三區，建立 PR）</option>
                 <option value="group">放浪團編輯（建立 PR）</option>
@@ -76,22 +76,23 @@
             </label>
             <label>
               <span>發布方式（僅擁有者）</span>
-              <select id="publishInput">
+              <select id="publishInput" disabled>
                 <option value="direct">直接提交 main</option>
                 <option value="pr">建立 Pull Request</option>
               </select>
             </label>
           </div>
           <p class="hint" id="roleHint">
-            非擁有者一律透過 Pull Request 送出，由擁有者審核合併。
-            建議在 GitHub 對 <strong>main</strong> 開啟分支保護（Require a pull request），這樣權限才是真正被限制。
+            請先貼上 token 並按「驗證 Token」。系統會依 GitHub 權限自動鎖定；只有擁有者可以選權限。
           </p>
 
           <div class="row">
-            <button class="btn primary" id="connectBtn" type="button">驗證並載入</button>
+            <button class="btn ghost" id="verifyBtn" type="button">驗證 Token</button>
+            <button class="btn primary" id="connectBtn" type="button" disabled>載入後台</button>
             <button class="btn ghost" id="localBtn" type="button" hidden>本機檔案模式</button>
-            <span class="hint" id="setupHint"></span>
+            <span class="hint" id="setupHint">先驗證 token，確認身分後再按「載入後台」。</span>
           </div>
+          <div class="verify-result" id="verifyResult" hidden></div>
           <p class="error" id="setupError" hidden></p>
         </div>
 
@@ -104,7 +105,7 @@
             <li>Repository access 選 <strong>Only select repositories</strong>，只勾 <code>CollapseHT/collapseht.github.io</code>。</li>
             <li>Repository permissions → <strong>Contents</strong> 設為 <strong>Read and write</strong>（Metadata 會自動變 Read）。</li>
             <li>如果要用「建立 Pull Request」：<strong>Pull requests</strong> 也設為 <strong>Read and write</strong>。</li>
-            <li>朋友要先被邀請成這個 repo 的 collaborator（Settings → Collaborators），才能用自己的 token 寫入。</li>
+            <li>朋友要先被邀請成這個 repo 的 collaborator（Settings → Collaborators，權限選 <strong>Write</strong>，不要 Admin），才能用自己的 token 寫入。</li>
             <li>Generate token，複製 <code>github_pat_...</code> 貼到上面的欄位。</li>
           </ol>
           <p class="hint" style="margin-top: 10px">

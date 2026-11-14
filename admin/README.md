@@ -50,12 +50,13 @@
 5. Repository access：**Only select repositories** → 只選 CollapseHT/collapseht.github.io
 6. Repository permissions → **Contents** → **Read and write**
 7. 需要 PR 模式時：**Pull requests** → **Read and write**
-8. 朋友要先被邀請成這個 repo 的 collaborator（Settings → Collaborators）
+8. 朋友要先被邀請成這個 repo 的 collaborator（Settings → Collaborators，權限選 Write，不要 Admin）
 9. 產生後複製 github_pat_... 開頭的字串
 
 ### 2-3. 連線
 
-在後台填入 owner/repo、branch、token，按「驗證並載入」。
+在後台填入 owner/repo、branch、token，先按「驗證 Token」；
+確認帳號、repo 權限與 branch 後，再按「載入後台」。
 權杖只會存在這台裝置的 localStorage，不會寫進網站、不會出現在網址或 console。
 換電腦或按「登出」就會清除。
 
@@ -69,7 +70,11 @@
 
 ### 2-5. 權限模式（朋友只能編輯某一區）
 
-後台在連線前可以選「權限模式」：
+權限不再用網址參數指定，而是由 token 驗證結果決定：
+
+- 擁有者：驗證後可以選「權限模式」，包含擁有者 / 內容編輯 / 放浪團編輯 / 部落格編輯 / 更新歷程編輯。
+- 其他 collaborator（Write / Maintain / Admin）：自動鎖定為「放浪團編輯」，選單不能改。
+- 只有 Read / Triage：不能使用後台。
 
 | 模式 | 可編輯 | 發布方式 |
 | --- | --- | --- |
@@ -79,11 +84,9 @@
 | 部落格編輯 | 部落格 | 一律 PR |
 | 更新歷程編輯 | 更新歷程 | 一律 PR |
 
-朋友第一次可以用網址直接鎖定模式：
-
-    https://collapseht.github.io/admin/?role=group
-
-他用自己的 GitHub 帳號建立 token、貼上後，只會看到「放浪團」分頁。
+朋友直接開 https://collapseht.github.io/admin/，貼上自己的 token，
+按「驗證 Token」後會看到自己的帳號與 Write 權限，權限自動鎖定為「放浪團編輯」；
+再按「載入後台」即可。網址不需要加 ?role=group。
 儲存時後台會建立一個 branch 與 Pull Request，**不會直接寫 main**。
 同一次連線裡再按儲存，會更新同一個 PR。
 
@@ -92,7 +95,7 @@
 > Require a pull request before merging。這樣即使朋友改後台程式碼、
 > 或直接呼叫 GitHub API，也只能建立 PR，不能推 main。
 
-朋友需要用自己的帳號被加為 collaborator；不要把擁有者的 token 給朋友。
+朋友需要用自己的帳號被加為 collaborator（權限請選 Write，不要 Admin；Admin 會落在 ruleset bypass 名單）；不要把擁有者的 token 給朋友。
 建議每位朋友各自產生一組 Fine-grained token（Contents + Pull requests）。
 
 ---

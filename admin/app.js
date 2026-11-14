@@ -48,6 +48,7 @@
     busy: false,
     lastCommit: "",
     localDir: null,
+    verified: null,
     initialTab: "",
     activeTab: "updates",
     pr: null,
@@ -110,7 +111,8 @@
     state.busy = busy;
     el.overlay.hidden = !busy;
     if (busy) el.overlayText.textContent = message || "處理中…";
-    el.connectBtn.disabled = busy;
+    el.connectBtn.disabled = busy || !state.verified;
+    if (el.verifyBtn) el.verifyBtn.disabled = busy;
     updateSavebar();
   }
   function makeApiError(status, message, data) {
@@ -217,19 +219,124 @@
   }
 
   function syncRoleUI() {
+    var verified = state.verified;
+    var isOwner = !!(verified && verified.isOwner);
     var role = el.roleInput.value;
     var info = ROLES[role] || ROLES.owner;
-    var owner = role === "owner";
-    el.publishInput.disabled = !owner;
-    if (!owner) el.publishInput.value = "pr";
-    if (owner) {
-      el.roleHint.textContent = "擁有者可以選擇直接提交 main，或建立 Pull Request 後自行合併。";
+    var ownerRole = role === "owner";
+    el.roleInput.disabled = !isOwner;
+    el.publishInput.disabled = !(isOwner && ownerRole);
+    if (!ownerRole) el.publishInput.value = "pr";
+    if (!verified) {
+      el.roleHint.textContent = "請先貼上 token 並按「驗證 Token」；系統會依 GitHub 權限自動鎖定，只有擁有者可以選權限。";
+    } else if (!isOwner) {
+      el.roleHint.textContent = "已依 GitHub 權限自動鎖定為「" + ROLES.group.label + "」，只能編輯放浪團；儲存會建立 Pull Request。";
+    } else if (ownerRole) {
+      el.roleHint.textContent = "你是擁有者，可選擇要使用的權限；發布方式可選直接提交 main 或建立 Pull Request。";
     } else {
-      el.roleHint.textContent = "非擁有者一律透過 Pull Request 送出，只能編輯：" +
-        info.sections.map(function (section) {
-          return { updates: "更新歷程", posts: "部落格", group: "放浪團" }[section];
-        }).join("、") +
-        "。建議在 GitHub 對 main 開啟分支保護（Require a pull request），這樣權限才是真正被限制。";
+      el.roleHint.textContent = "你是擁有者，目前以「" + info.label + "」身分測試；儲存仍會走 Pull Request。";
+    }
+  }
+
+  function resetVerification() {
+    if (!state.verified) return;
+    state.verified = null;
+    el.connectBtn.disabled = true;
+    el.verifyResult.hidden = true;
+    el.roleInput.disabled = true;
+    el.publishInput.disabled = true;
+    el.roleInput.value = "owner";
+    el.publishInput.value = "direct";
+    syncRoleUI();
+    el.setupHint.textContent = "內容已變更，請重新驗證 token。";
+    showError("");
+  }
+
+  async function verifyToken() {
+    showError("");
+    state.verified = null;
+    el.connectBtn.disabled = true;
+    el.verifyResult.hidden = true;
+    el.roleInput.disabled = true;
+    el.publishInput.disabled = true;
+    el.setupHint.textContent = "";
+    syncRoleUI();
+
+    var token = el.tokenInput.value.trim();
+    if (!token) {
+      showError("請先貼上 GitHub token。");
+      return;
+    }
+    var target;
+    try {
+      target = parseRepoInput();
+    } catch (error) {
+      showError(formatError(error));
+      return;
+    }
+    var branch = el.branchInput.value.trim() || "main";
+    state.token = token;
+    setBusy(true, "驗證權杖與權限…");
+    try {
+      var me = await gh("GET", "/user");
+      var info = await gh("GET", "/repos/" + target.owner + "/" + target.repo);
+      await gh("GET", "/repos/" + target.owner + "/" + target.repo + "/git/ref/heads/" + encodeURIComponent(branch));
+
+      var repoOwner = info.owner && info.owner.login ? String(info.owner.login) : "";
+      var isOwner = !!repoOwner && String(me.login).toLowerCase() === repoOwner.toLowerCase();
+      var perms = info.permissions || {};
+      var canWrite = !!(perms.push || perms.maintain || perms.admin);
+      if (!canWrite) {
+        throw new Error("這組 token 只有讀取權限（或沒有寫入權限），無法使用後台。");
+      }
+      var permLabel = perms.admin ? "Admin" : perms.maintain ? "Maintain" : "Write";
+
+      state.verified = {
+        token: token,
+        owner: target.owner,
+        repo: target.repo,
+        branch: branch,
+        login: me.login,
+        isOwner: isOwner
+      };
+      state.owner = target.owner;
+      state.repo = target.repo;
+      state.branch = branch;
+
+      if (isOwner) {
+        var saved = readConfig();
+        var savedRole = saved && ROLES[saved.role] ? saved.role : "owner";
+        el.roleInput.value = savedRole;
+        var savedPublish = saved && (saved.publishMode === "pr" || saved.publishMode === "direct") ? saved.publishMode : "direct";
+        el.publishInput.value = savedPublish;
+      } else {
+        el.roleInput.value = "group";
+        el.publishInput.value = "pr";
+      }
+      state.role = el.roleInput.value;
+      state.publishMode = el.publishInput.value;
+      syncRoleUI();
+
+      el.verifyResult.innerHTML = "✅ 已驗證 <strong>" + esc(me.login) + "</strong>（" +
+        (isOwner ? "擁有者" : permLabel) + "）" +
+        (isOwner ? "，可選擇要使用的權限。" : "，已自動鎖定為「" + ROLES.group.label + "」。");
+      el.verifyResult.hidden = false;
+      el.connectBtn.disabled = false;
+      el.setupHint.textContent = isOwner
+        ? "驗證成功，選好權限後按「載入後台」。"
+        : "驗證成功，權限已鎖定；按「載入後台」進入。";
+      toast("Token 驗證成功。", "ok");
+    } catch (error) {
+      state.verified = null;
+      el.connectBtn.disabled = true;
+      el.roleInput.disabled = true;
+      el.publishInput.disabled = true;
+      el.verifyResult.hidden = true;
+      syncRoleUI();
+      showError(formatError(error));
+      el.setupHint.textContent = "";
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -238,25 +345,26 @@
       showError("");
       var target = parseRepoInput();
       var token = el.tokenInput.value.trim();
+      var branch = el.branchInput.value.trim() || "main";
       if (!token) throw new Error("請先貼上 GitHub token。");
-      var role = el.roleInput.value;
+      if (!state.verified || state.verified.token !== token ||
+          state.verified.owner !== target.owner || state.verified.repo !== target.repo ||
+          state.verified.branch !== branch) {
+        throw new Error("請先按「驗證 Token」，確認身分與權限後再載入。");
+      }
+      var role = state.verified.isOwner ? el.roleInput.value : "group";
       if (!ROLES[role]) throw new Error("權限模式不正確。");
       state.mode = "github";
       state.token = token;
       state.owner = target.owner;
       state.repo = target.repo;
-      state.branch = el.branchInput.value.trim() || "main";
+      state.branch = branch;
       state.role = role;
       state.publishMode = role === "owner" ? (el.publishInput.value === "pr" ? "pr" : "direct") : "pr";
+      el.roleInput.value = role;
       state.pr = null;
       clearUploads();
-      setBusy(true, "驗證權杖與讀取內容…");
-
-      var info = await gh("GET", "/repos/" + state.owner + "/" + state.repo);
-      if (!info.permissions || !info.permissions.push) {
-        throw new Error("這組權杖沒有寫入權限，請確認 Fine-grained token 的 Contents 設為 Read and write。");
-      }
-      el.setupHint.textContent = "讀取 update.html / blog.html / group.html…";
+      setBusy(true, "讀取 update.html / blog.html / group.html…");
       await loadFiles();
       state.data = Core.parseAll(state.files);
       state.loaded = clone(state.data);
@@ -1079,6 +1187,8 @@
     el.publishInput = $("#publishInput");
     el.roleHint = $("#roleHint");
     el.connectBtn = $("#connectBtn");
+    el.verifyBtn = $("#verifyBtn");
+    el.verifyResult = $("#verifyResult");
     el.localBtn = $("#localBtn");
     el.setupHint = $("#setupHint");
     el.setupError = $("#setupError");
@@ -1102,6 +1212,7 @@
     el.countGroup = $("#countGroup");
 
     el.connectBtn.addEventListener("click", connectGitHub);
+    el.verifyBtn.addEventListener("click", verifyToken);
     el.localBtn.addEventListener("click", connectLocal);
     el.saveBtn.addEventListener("click", save);
     el.discardBtn.addEventListener("click", discard);
@@ -1111,8 +1222,12 @@
     el.tokenInput.addEventListener("keydown", function (event) {
       if (event.key === "Enter") {
         event.preventDefault();
-        connectGitHub();
+        if (state.verified) connectGitHub();
+        else verifyToken();
       }
+    });
+    [el.tokenInput, el.repoInput, el.branchInput].forEach(function (input) {
+      input.addEventListener("input", resetVerification);
     });
 
     var panels = $("#panels");
@@ -1152,17 +1267,13 @@
     if (isLocalEnv()) el.localBtn.hidden = false;
 
     var params = new URLSearchParams(location.search);
-    var queryRole = params.get("role");
-    var queryPublish = params.get("publish");
     var tab = params.get("tab");
-
-    if (ROLES[queryRole]) {
-      el.roleInput.value = queryRole;
-      el.roleInput.disabled = true;
-      el.setupHint.textContent = "此連結已鎖定權限模式：" + ROLES[queryRole].label;
-    }
-    if (queryPublish === "pr" || queryPublish === "direct") el.publishInput.value = queryPublish;
     if (tab === "updates" || tab === "posts" || tab === "group") state.initialTab = tab;
+
+    el.roleInput.disabled = true;
+    el.publishInput.disabled = true;
+    el.connectBtn.disabled = true;
+    el.verifyResult.hidden = true;
 
     var config = readConfig();
     if (config && config.token) {
@@ -1173,20 +1284,19 @@
       el.repoInput.value = config.owner + "/" + config.repo;
       el.branchInput.value = state.branch;
       el.tokenInput.value = config.token;
-      if (!ROLES[queryRole] && ROLES[config.role]) el.roleInput.value = config.role;
-      if (!queryPublish && (config.publishMode === "pr" || config.publishMode === "direct")) {
+      if (ROLES[config.role]) el.roleInput.value = config.role;
+      if (config.publishMode === "pr" || config.publishMode === "direct") {
         el.publishInput.value = config.publishMode;
       }
-      el.setupHint.textContent = "使用已儲存的權杖連線中…";
-      syncRoleUI();
-      if (params.get("local") === "1" && isLocalEnv()) connectLocal();
-      else connectGitHub();
-    } else if (params.get("local") === "1" && isLocalEnv()) {
-      syncRoleUI();
+      el.setupHint.textContent = "已帶入上次的 repo 與 token；請按「驗證 Token」。";
+    }
+
+    syncRoleUI();
+
+    if (params.get("local") === "1" && isLocalEnv()) {
       connectLocal();
-    } else {
-      syncRoleUI();
-      if (isLocalEnv()) el.setupHint.textContent = "也可以直接使用「本機檔案模式」，不用 GitHub 權杖。";
+    } else if (isLocalEnv()) {
+      el.setupHint.textContent = "先驗證 token 再載入；也可以直接用「本機檔案模式」。";
     }
   });
 })();

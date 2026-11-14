@@ -171,6 +171,31 @@ a { color: var(--accent); }
 
 .card h2 { margin: 0 0 6px; font-size: 1.15rem; color: var(--accent); }
 
+.verify-result {
+    margin-top: 10px;
+    padding: 12px 16px;
+    border-radius: 16px;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+.verify-result strong { color: #047857; }
+
+.btn:disabled,
+.btn[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+    filter: grayscale(0.2);
+}
+
+select:disabled {
+    background: #f6f3f7;
+    color: #9a8fa6;
+    cursor: not-allowed;
+}
+
 .notice-soft {
   background: #f0fdfa;
   border: 1px solid #99f6e4;
