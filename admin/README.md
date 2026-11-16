@@ -22,11 +22,11 @@
 - 前台：http://127.0.0.1:5173/
 - 後台：http://127.0.0.1:5173/admin/
 
-進入後台後按「本機檔案模式」，會讀取同一資料夾的 update.html、blog.html、group.html。
+進入後台後按「本機檔案模式」，會讀取同一資料夾的 update.html、blog.html、group.html 與 legend/*.html。
 改完按「儲存檔案」：
 
 - Chrome / Edge：會請你選擇 collapseht.github.io 資料夾，直接寫回三個 HTML。
-- 其他瀏覽器：會下載三個 HTML，手動覆蓋原檔。
+- 其他瀏覽器：會下載有改到的 HTML（含 legend/ 底下的頁面），手動覆蓋原檔。
 
 > serve.mjs 只綁定 127.0.0.1，只有這台電腦能連線，不會對外開放。
 > 如果 5173 被占用：PORT=5174 node admin/serve.mjs。
@@ -37,7 +37,7 @@
 
 ### 2-1. 先部署一次包含編輯標記的前台
 
-後台是讀 GitHub 上的 update.html / blog.html / group.html 來編輯，
+後台是讀 GitHub 上的前台 HTML（update / blog / group / legend）來編輯，
 所以**第一次使用前，必須先把目前這版前台 push 上去**（三個檔案裡要有 AUTO 註解標記）。
 如果 GitHub 上的版本還是舊的，後台會顯示「找不到編輯標記」。
 
@@ -129,6 +129,31 @@
 
 也可以手動填路徑，例如 group/yen.jpg；支援 .jpg、.png、.webp。
 
+### Legend 伺服器（legend/）
+
+「🖥 Legend」分頁可以編輯四個頁面的全部內容：
+
+- 資源包：主標題、伺服器 IP、Logo、快速入口卡片、下載資源（含密碼下載）、使用方法、音效試聽
+- 箱子活動：活動時間、碎片獲取表、四種箱子的獎勵與機率、里程碑、核心活動模式、不定時發放與地圖輪替
+- 翻牌活動：活動時間、次數獲得方式、玩法說明
+- 伺服器規則：章節、條文、列點、罰則、備註、子條文
+
+編輯畫面左邊是區塊清單（4 頁 × 各區段），右邊一次只顯示一個區塊的內容；
+
+下方有**即時預覽**，會用同一份資料重建該頁並用綠框標出目前區塊，改完立刻看得到結果。
+
+內容以「區塊」為單位編輯：每個區塊一段文字。
+
+- 一行一個欄位，寫成「欄位：內容」
+- 清單（入口卡片、獎勵、條文…）縮排 4 個空白，項目之間用 `---` 分隔
+- 列點、Logo 這類多行欄位：標籤後面留空，下面每行縮排 4 個空白
+- 支援 `程式碼` 與 [連結](https://example.com)
+- 格式有誤時，該區塊下方會顯示第幾行出錯，且不會儲存
+
+每個 Legend 頁面的 `<main>` 裡都有一段
+`<script type="application/json" data-legend-config>` 設定，
+後台就是讀寫這段 JSON，再重新產生標記之間的 HTML。**請不要把那段 JSON 或 AUTO 標記刪掉。**
+
 ---
 
 ## 4. 原理與編輯標記
@@ -145,6 +170,10 @@
 | AUTO:GROUP_POSTS | group.html 的團員投稿卡片 |
 | AUTO:MAIN_MEMBERS | group.html 的主要成員卡片 |
 | AUTO:SUB_MEMBERS | group.html 的次級成員卡片 |
+| AUTO:LEGEND_INDEX | legend/index.html 的資源包內容 |
+| AUTO:LEGEND_BOXES | legend/boxes.html 的箱子活動內容 |
+| AUTO:LEGEND_FLIPS | legend/flips.html 的翻牌活動內容 |
+| AUTO:LEGEND_RULES | legend/rules.html 的伺服器規則內容 |
 
 **請不要手動刪除這些註解**，否則後台會讀不到。
 如果你手動改了標記區塊裡的 HTML，格式可能會被後台下次儲存時覆蓋（內容會保留，排版會用後台模板重建）。
@@ -154,7 +183,8 @@
     admin/
       index.html   後台介面（noindex）
       admin.css    後台樣式
-      core.js      解析 / 渲染（瀏覽器 + Node 共用）
+      core.js      更新歷程 / 部落格 / 放浪團的解析與渲染（瀏覽器 + Node 共用）
+      legend-core.js  Legend 四頁的解析與渲染（瀏覽器 + Node 共用）
       app.js       UI + GitHub API + 本機存檔
       serve.mjs    本機靜態伺服器（無第三方依賴）
 

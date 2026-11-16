@@ -14,6 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap"
     />
     <link rel="stylesheet" href="admin.css" />
+    <script src="legend-core.js" defer></script>
     <script src="core.js" defer></script>
     <script src="app.js" defer></script>
   </head>
@@ -37,7 +38,7 @@
         <div class="card">
           <h1>內容管理後台</h1>
           <p class="lead">
-            在這裡修改「更新歷程」、「部落格」與「放浪團」的內容。儲存後會依權限直接 commit 或建立 Pull Request，
+            在這裡修改「更新歷程」、「部落格」、「放浪團」與「Legend 伺服器」的內容。儲存後會依權限直接 commit 或建立 Pull Request，
             GitHub Pages 大約 1 分鐘後更新前台。
           </p>
 
@@ -72,6 +73,7 @@
                 <option value="group">放浪團編輯（建立 PR）</option>
                 <option value="posts">部落格編輯（建立 PR）</option>
                 <option value="updates">更新歷程編輯（建立 PR）</option>
+                <option value="legend">Legend 編輯（建立 PR）</option>
               </select>
             </label>
             <label>
@@ -122,7 +124,7 @@
           <h3>本機模式是什麼？</h3>
           <p class="hint">
             在本機用 <code>http://localhost</code> 開啟後台時，可以選「本機檔案模式」：
-            直接讀取同資料夾的前台 HTML，改完用瀏覽器寫回檔案（或下載三個 HTML），
+            直接讀取同資料夾的前台 HTML（update、blog、group 與 legend/），改完用瀏覽器寫回檔案（或下載這些 HTML），
             不需要 token，適合先在本機預覽、確認版面後再自行 push。
           </p>
           <p class="hint">
@@ -153,6 +155,9 @@
           <button class="tab" type="button" data-tab="group" role="tab" aria-selected="false">
             🎮 放浪團 <span class="count" id="countGroup">0</span>
           </button>
+          <button class="tab" type="button" data-tab="legend" role="tab" aria-selected="false">
+            🖥 Legend <span class="count" id="countLegend">0</span>
+          </button>
         </nav>
 
         <div class="notice-soft" id="roleNotice" hidden></div>
@@ -165,6 +170,7 @@
           <section class="panel" data-panel="updates" role="tabpanel"></section>
           <section class="panel" data-panel="posts" role="tabpanel" hidden></section>
           <section class="panel" data-panel="group" role="tabpanel" hidden></section>
+          <section class="panel" data-panel="legend" role="tabpanel" hidden></section>
         </div>
       </section>
     </div>

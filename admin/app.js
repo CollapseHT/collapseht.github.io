@@ -10,16 +10,39 @@
 
   var Core = window.AdminCore;
   var LS_KEY = "mogumogu-admin-v1";
-  var FILES = { update: "update.html", blog: "blog.html", group: "group.html" };
-  var LABELS = { update: "更新歷程", blog: "部落格", group: "放浪團" };
-  var SECTION_FILE = { updates: "update", posts: "blog", group: "group" };
+  var Legend = window.LegendCore;
+  var FILES = {
+    update: "update.html",
+    blog: "blog.html",
+    group: "group.html",
+    legendIndex: "legend/index.html",
+    legendBoxes: "legend/boxes.html",
+    legendFlips: "legend/flips.html",
+    legendRules: "legend/rules.html"
+  };
+  var LABELS = {
+    update: "更新歷程",
+    blog: "部落格",
+    group: "放浪團",
+    legendIndex: "Legend 資源包",
+    legendBoxes: "Legend 箱子活動",
+    legendFlips: "Legend 翻牌活動",
+    legendRules: "Legend 伺服器規則"
+  };
+  var SECTION_FILE = {
+    updates: ["update"],
+    posts: ["blog"],
+    group: ["group"],
+    legend: ["legendIndex", "legendBoxes", "legendFlips", "legendRules"]
+  };
   var LIST_SECTION = { updates: "updates", posts: "posts", news: "group", groupPosts: "group", main: "group", sub: "group" };
   var ROLES = {
-    owner: { label: "擁有者", sections: ["updates", "posts", "group"] },
-    editor: { label: "內容編輯", sections: ["updates", "posts", "group"] },
+    owner: { label: "擁有者", sections: ["updates", "posts", "group", "legend"] },
+    editor: { label: "內容編輯", sections: ["updates", "posts", "group", "legend"] },
     group: { label: "放浪團編輯", sections: ["group"] },
     posts: { label: "部落格編輯", sections: ["posts"] },
-    updates: { label: "更新歷程編輯", sections: ["updates"] }
+    updates: { label: "更新歷程編輯", sections: ["updates"] },
+    legend: { label: "Legend 編輯", sections: ["legend"] }
   };
   var API_BASE = (typeof window !== "undefined" && window.__ADMIN_API_BASE__) || "https://api.github.com";
   var POST_ICONS = [
@@ -41,7 +64,10 @@
     branch: "main",
     role: "owner",
     publishMode: "direct",
-    files: { update: "", blog: "", group: "" },
+    files: {
+      update: "", blog: "", group: "",
+      legendIndex: "", legendBoxes: "", legendFlips: "", legendRules: ""
+    },
     data: null,
     loaded: null,
     dirty: false,
@@ -52,7 +78,10 @@
     initialTab: "",
     activeTab: "updates",
     pr: null,
-    uploads: {}
+    uploads: {},
+    legendRaw: {},
+    legendErrors: {},
+    legendActive: "",
   };
 
   var el = {};
@@ -138,7 +167,9 @@
   function allowedSections() { return roleInfo().sections; }
   function canEdit(section) { return allowedSections().indexOf(section) >= 0; }
   function allowedKeys() {
-    return allowedSections().map(function (section) { return SECTION_FILE[section]; });
+    return allowedSections().reduce(function (list, section) {
+      return list.concat(SECTION_FILE[section] || []);
+    }, []);
   }
   function isPrMode() {
     return state.mode === "local" ? false : (state.role !== "owner" || state.publishMode === "pr");
@@ -181,8 +212,31 @@
   }
 
   async function loadFiles() {
-    var result = await Promise.all([getContent(FILES.update), getContent(FILES.blog), getContent(FILES.group)]);
-    state.files = { update: result[0].text, blog: result[1].text, group: result[2].text };
+    var keys = Object.keys(FILES);
+    var result = await Promise.all(keys.map(function (key) { return getContent(FILES[key]); }));
+    var files = {};
+    keys.forEach(function (key, index) { files[key] = result[index].text; });
+    state.files = files;
+  }
+
+  function parseAllFiles() {
+    var data = Core.parseAll(state.files);
+    data.legend = Legend
+      ? Legend.parse(state.files)
+      : { index: null, boxes: null, flips: null, rules: null };
+    return data;
+  }
+
+  function buildAllFiles() {
+    var built = Core.buildAll(state.files, state.data);
+    Object.keys(FILES).forEach(function (key) {
+      if (built[key] == null) built[key] = state.files[key];
+    });
+    if (Legend && state.data.legend) {
+      var legendBuilt = Legend.build(state.files, state.data.legend);
+      Object.keys(legendBuilt).forEach(function (key) { built[key] = legendBuilt[key]; });
+    }
+    return built;
   }
 
   /* ---------------- 設定 ---------------- */
@@ -364,9 +418,9 @@
       el.roleInput.value = role;
       state.pr = null;
       clearUploads();
-      setBusy(true, "讀取 update.html / blog.html / group.html…");
+      setBusy(true, "讀取前台頁面（含 Legend）…");
       await loadFiles();
-      state.data = Core.parseAll(state.files);
+      state.data = parseAllFiles();
       state.loaded = clone(state.data);
       state.dirty = false;
       state.lastCommit = "";
@@ -388,7 +442,7 @@
         throw new Error("本機模式無法在 file:// 底下讀取檔案。請在 collapseht.github.io 資料夾執行「node admin/serve.mjs」，再開 http://127.0.0.1:5173/admin/");
       }
       setBusy(true, "讀取本機前台檔案…");
-      var names = ["update", "blog", "group"];
+      var names = Object.keys(FILES);
       var texts = await Promise.all(names.map(function (key) {
         return fetch("../" + FILES[key], { cache: "no-store" }).then(function (response) {
           if (!response.ok) throw new Error("讀不到 ../" + FILES[key]);
@@ -400,8 +454,10 @@
       state.publishMode = "direct";
       state.pr = null;
       clearUploads();
-      state.files = { update: texts[0], blog: texts[1], group: texts[2] };
-      state.data = Core.parseAll(state.files);
+      var localFiles = {};
+      names.forEach(function (key, index) { localFiles[key] = texts[index]; });
+      state.files = localFiles;
+      state.data = parseAllFiles();
       state.loaded = clone(state.data);
       state.dirty = false;
       state.lastCommit = "";
@@ -429,7 +485,7 @@
       ? "本機檔案模式"
       : state.owner + "/" + state.repo + " · " + state.branch + " · " + roleInfo().label;
     el.loadInfo.innerHTML = state.mode === "local"
-      ? "本機模式：讀取目前資料夾的 update.html / blog.html / group.html（不會 commit）"
+      ? "本機模式：讀取目前資料夾的前台頁面（含 legend/，不會 commit）"
       : "已載入 <strong>" + esc(state.owner + "/" + state.repo) + "</strong>（" + esc(state.branch) + "）";
 
     var allowed = allowedSections();
@@ -449,10 +505,13 @@
       el.roleNotice.textContent = "權限：" + roleInfo().label + "｜" +
         (isPrMode() ? "儲存後會建立 / 更新 Pull Request，等待擁有者審核合併。" : "直接提交 main。") +
         " 可編輯：" + allowed.map(function (section) {
-          return { updates: "更新歷程", posts: "部落格", group: "放浪團" }[section];
+          return { updates: "更新歷程", posts: "部落格", group: "放浪團", legend: "Legend" }[section];
         }).join("、");
     }
     el.uploadHint.hidden = state.mode === "local" ? false : !canEdit("group");
+    state.legendRaw = {};
+    state.legendErrors = {};
+    state.legendActive = "";
 
     renderPanels();
     updateSavebar();
@@ -631,14 +690,537 @@
     return html;
   }
 
+  var LEGEND_SCHEMA = {
+    index: {
+      label: "資源包頁（legend/index.html）",
+      groups: [
+        { title: "頁首", fields: [
+          { path: "eyebrow", label: "英文小標" },
+          { path: "title", label: "主標題" },
+          { path: "lead", label: "副標題" },
+          { path: "ip", label: "伺服器 IP" },
+          { path: "logos", label: "Logo 圖片路徑（一行一張）", lines: true, wide: true }
+        ] },
+        { title: "快速入口", fields: [
+          { path: "linksTitle", label: "區塊標題" },
+          { path: "linksSub", label: "區塊說明" },
+          { list: "links", label: "入口卡片", factory: function () { return { title: "新入口", note: "", href: "#", button: "前往" }; }, item: {
+            fields: [
+              { path: "title", label: "名稱" },
+              { path: "note", label: "說明" },
+              { path: "href", label: "連結（站內 ./ 或 https://）" },
+              { path: "button", label: "按鈕文字" }
+            ] } }
+        ] },
+        { title: "下載資源", fields: [
+          { path: "downloadsTitle", label: "區塊標題" },
+          { path: "downloadsNotice", label: "提示文字", wide: true },
+          { list: "downloads", label: "下載項目", factory: function () { return { name: "新資源", meta: "", href: "", label: "下載", action: "link" }; }, item: {
+            fields: [
+              { path: "name", label: "名稱" },
+              { path: "meta", label: "說明（例如 last update）" },
+              { path: "href", label: "檔案路徑 / 網址" },
+              { path: "label", label: "按鈕文字" },
+              { path: "action", label: "類型", options: [["link", "下載連結"], ["password", "密碼下載"]] }
+            ] } }
+        ] },
+        { title: "使用方法", fields: [
+          { path: "usageTitle", label: "區塊標題" },
+          { path: "usageIntro", label: "區塊說明", wide: true },
+          { path: "usageStep", label: "步驟說明", wide: true, textarea: true },
+          { path: "usagePath", label: "資源路徑（等寬顯示）", wide: true },
+          { path: "usageAltTitle", label: "備用方式標題", wide: true },
+          { path: "usageAlt1", label: "備用方式 1（支援 \u0060程式碼\u0060 與 [連結](網址)）", wide: true, textarea: true },
+          { path: "usageAlt2", label: "備用方式 2", wide: true, textarea: true },
+          { path: "shot", label: "截圖路徑" },
+          { path: "shotAlt", label: "截圖替代文字" }
+        ] },
+        { title: "音效試聽", fields: [
+          { path: "audioTitle", label: "區塊標題" },
+          { path: "audioSub", label: "區塊說明", wide: true },
+          { list: "audio", label: "音效組", factory: function () { return { title: "新音效", old: "", next: "", type: "audio/wav" }; }, item: {
+            fields: [
+              { path: "title", label: "組別名稱" },
+              { path: "old", label: "原檔案路徑" },
+              { path: "next", label: "新檔案路徑" },
+              { path: "type", label: "檔案類型" }
+            ] } }
+        ] }
+      ]
+    },
+    boxes: {
+      label: "箱子活動頁（legend/boxes.html）",
+      groups: [
+        { title: "頁首", fields: [
+          { path: "eyebrow", label: "英文小標" },
+          { path: "title", label: "主標題" },
+          { path: "lead", label: "副標題" },
+          { path: "ip", label: "伺服器 IP" },
+          { path: "notice", label: "提示文字", wide: true }
+        ] },
+        { title: "頁首跳轉按鈕", fields: [
+          { list: "chips", label: "跳轉按鈕", factory: function () { return { label: "新連結", href: "#" }; }, item: {
+            fields: [
+              { path: "label", label: "文字" },
+              { path: "href", label: "錨點（#box1）" }
+            ] } }
+        ] },
+        { title: "活動資訊", fields: [
+          { path: "infoTitle", label: "標題" },
+          { path: "infoSub", label: "說明", wide: true },
+          { path: "infoTime", label: "活動時間" }
+        ] },
+        { title: "碎片獲取方式", fields: [
+          { path: "getTitle", label: "標題" },
+          { list: "fragments", label: "獲取方式", factory: function () { return { label: "新項目", min: "1", max: "1", anchor: "", anchorText: "【?】" }; }, item: {
+            fields: [
+              { path: "label", label: "事項" },
+              { path: "min", label: "最少" },
+              { path: "max", label: "最多" },
+              { path: "anchor", label: "連結錨點（可留空）" },
+              { path: "anchorText", label: "連結文字" }
+            ] } }
+        ] },
+        { title: "第一階段 ‧ 開箱得獎勵", fields: [
+          { path: "box1Title", label: "標題" },
+          { path: "box1Sub", label: "說明", wide: true },
+          { list: "chests", label: "箱子", factory: function () { return { name: "新箱子", need: "碎片需求：", pre: "", rewards: [{ name: "新獎勵", pct: "0%" }] }; }, item: {
+            fields: [
+              { path: "name", label: "箱子名稱" },
+              { path: "need", label: "碎片需求" },
+              { path: "pre", label: "前置條件" }
+            ],
+            lists: [
+              { list: "rewards", label: "獎勵", factory: function () { return { name: "新獎勵", pct: "0%" }; }, item: {
+                fields: [
+                  { path: "name", label: "獎勵" },
+                  { path: "pct", label: "機率" }
+                ] } }
+            ] } }
+        ] },
+        { title: "第二階段 ‧ 開箱里程碑", fields: [
+          { path: "box2Title", label: "標題" },
+          { path: "box2Sub", label: "說明", wide: true },
+          { list: "milestones", label: "里程碑分組", factory: function () { return { name: "新箱子", meta: "碎片需求：", rows: [{ reward: "新獎勵", count: "1" }] }; }, item: {
+            fields: [
+              { path: "name", label: "箱子名稱" },
+              { path: "meta", label: "需求 / 前置條件" }
+            ],
+            lists: [
+              { list: "rows", label: "獎勵列", factory: function () { return { reward: "新獎勵", count: "1" }; }, item: {
+                fields: [
+                  { path: "reward", label: "獎勵" },
+                  { path: "count", label: "累計次數" }
+                ] } }
+            ] } }
+        ] },
+        { title: "核心活動說明", fields: [
+          { path: "coreTitle", label: "標題" },
+          { path: "coreSub", label: "說明", wide: true },
+          { list: "modes", label: "活動模式", factory: function () { return { name: "新模式", desc: "", boss: "1", stars: "★★★☆☆" }; }, item: {
+            fields: [
+              { path: "name", label: "模式名稱" },
+              { path: "desc", label: "模式說明", wide: true, textarea: true },
+              { path: "boss", label: "魔王人數" },
+              { path: "stars", label: "碎片期待度（星號）" }
+            ] } }
+        ] },
+        { title: "不定時發放說明", fields: [
+          { path: "timeTitle", label: "標題" },
+          { path: "timeSub", label: "說明", wide: true, textarea: true },
+          { path: "examplesTitle", label: "舉例標題" },
+          { path: "examples", label: "發放舉例（一行一項）", lines: true, wide: true },
+          { path: "mapTitle", label: "地圖輪替標題", wide: true },
+          { path: "fastLabel", label: "左欄標題" },
+          { path: "blockedLabel", label: "右欄標題" },
+          { list: "maps", label: "地圖清單", factory: function () { return { fast: "", blocked: "" }; }, item: {
+            fields: [
+              { path: "fast", label: "加速發放地圖" },
+              { path: "blocked", label: "不發放地圖" }
+            ] } }
+        ] }
+      ]
+    },
+    flips: {
+      label: "翻牌活動頁（legend/flips.html）",
+      groups: [
+        { title: "頁首", fields: [
+          { path: "eyebrow", label: "英文小標" },
+          { path: "title", label: "主標題" },
+          { path: "lead", label: "副標題" },
+          { path: "time", label: "活動時間" },
+          { path: "notice", label: "提示文字", wide: true }
+        ] },
+        { title: "次數獲得方式", fields: [
+          { path: "waysTitle", label: "標題" },
+          { path: "waysSub", label: "說明", wide: true },
+          { path: "ways", label: "獲得方式（一行一項）", lines: true, wide: true }
+        ] },
+        { title: "遊戲說明", fields: [
+          { path: "howtoTitle", label: "標題" },
+          { path: "howtoSub", label: "說明", wide: true, textarea: true },
+          { path: "gameTitle", label: "小遊戲標題" },
+          { path: "gameSub", label: "小遊戲說明", wide: true, textarea: true }
+        ] }
+      ]
+    },
+    rules: {
+      label: "伺服器規則頁（legend/rules.html）",
+      groups: [
+        { title: "頁首", fields: [
+          { path: "eyebrow", label: "英文小標" },
+          { path: "title", label: "主標題" },
+          { path: "lead", label: "副標題（含版本與更新時間）", wide: true },
+          { path: "notice", label: "提示文字", wide: true }
+        ] },
+        { title: "章節與條文", fields: [
+          { list: "chapters", label: "章節", factory: function () {
+            return { id: "ch5", title: "新章節", chip: "新章節", note: "", rules: [
+              { no: "1", title: "新條文", desc: "", list: [], penalty: "", remark: [], subs: [] }
+            ] };
+          }, item: {
+            fields: [
+              { path: "id", label: "錨點 id（例如 ch4）" },
+              { path: "title", label: "章節標題" },
+              { path: "chip", label: "頁首跳轉文字" },
+              { path: "note", label: "副標（可留空）" }
+            ],
+            lists: [
+              { list: "rules", label: "條文", factory: function () {
+                return { no: "", title: "新條文", desc: "", list: [], penalty: "", remark: [], subs: [] };
+              }, item: {
+                fields: [
+                  { path: "no", label: "編號（1.1）" },
+                  { path: "title", label: "條文標題" },
+                  { path: "desc", label: "說明", wide: true, textarea: true },
+                  { path: "list", label: "列點（一行一項）", lines: true, wide: true },
+                  { path: "penalty", label: "罰則", wide: true, textarea: true },
+                  { path: "remark", label: "備註（一行一項）", lines: true, wide: true }
+                ],
+                lists: [
+                  { list: "subs", label: "子條文", factory: function () {
+                    return { no: "", title: "新細項", desc: "", list: [], penalty: "", remark: [] };
+                  }, item: {
+                    fields: [
+                      { path: "no", label: "編號（2.1.1）" },
+                      { path: "title", label: "標題" },
+                      { path: "desc", label: "說明", wide: true, textarea: true },
+                      { path: "list", label: "列點（一行一項）", lines: true, wide: true },
+                      { path: "penalty", label: "罰則", wide: true, textarea: true },
+                      { path: "remark", label: "備註（一行一項）", lines: true, wide: true }
+                    ] } }
+                ]
+              } }
+            ] } }
+        ] }
+      ]
+    }
+  };
+
+  var LEGEND_INDENT = "    ";
+  var legendPreviewTimer = null;
+
+  function legendSerialize(node, object, level) {
+    var pad = new Array((level || 0) + 1).join(LEGEND_INDENT);
+    var out = [];
+    var fields = (node.fields || []).concat(node.lists || []);
+    fields.forEach(function (field) {
+      if (field.list) {
+        var list = (object && object[field.list]) || [];
+        out.push(pad + field.label + "：");
+        list.forEach(function (item, index) {
+          if (index) out.push(pad + LEGEND_INDENT + "---");
+          out.push(legendSerialize(field.item, item, (level || 0) + 1));
+        });
+      } else if (field.lines) {
+        var values = (object && object[field.path]) || [];
+        out.push(pad + field.label + "：");
+        values.forEach(function (value) { out.push(pad + LEGEND_INDENT + String(value)); });
+      } else {
+        var raw = object ? object[field.path] : "";
+        out.push(pad + field.label + "：" + (raw == null ? "" : String(raw)));
+      }
+    });
+    return out.join("\n");
+  }
+
+  function legendTokenize(text) {
+    var tokens = [];
+    String(text || "").split(/\r?\n/).forEach(function (line, index) {
+      if (!line.trim()) return;
+      var match = /^( *)(.*)$/.exec(line);
+      var spaces = match[1].length;
+      if (spaces % LEGEND_INDENT.length !== 0) {
+        tokens.push({ error: "第 " + (index + 1) + " 行：縮排請用 4 個空白為一階" });
+        return;
+      }
+      tokens.push({ level: spaces / LEGEND_INDENT.length, text: match[2].trim(), line: index + 1 });
+    });
+    var bad = tokens.filter(function (token) { return token.error; })[0];
+    return bad ? { error: bad.error } : { tokens: tokens };
+  }
+
+  function legendParseObject(node, tokens, cursor, level, used) {
+    var value = {};
+    var scalarByLabel = {};
+    var listByLabel = {};
+    (node.fields || []).concat(node.lists || []).forEach(function (field) {
+      if (field.list) listByLabel[field.label] = field;
+      else scalarByLabel[field.label] = field;
+    });
+    var seen = used || {};
+    while (cursor.index < tokens.length) {
+      var token = tokens[cursor.index];
+      if (token.level < level) break;
+      if (token.level > level) {
+        return { error: "第 " + token.line + " 行：縮排多了一階，請確認上一行是不是少了欄位" };
+      }
+      if (token.text === "---") break;
+      var split = token.text.indexOf("：");
+      if (split < 0) {
+        return { error: "第 " + token.line + " 行：請用「欄位：內容」的格式" };
+      }
+      var label = token.text.slice(0, split).trim();
+      var rest = token.text.slice(split + 1).trim();
+      if (scalarByLabel[label]) {
+        if (seen[label]) break;
+        seen[label] = true;
+        cursor.index++;
+        var field = scalarByLabel[label];
+        if (field.lines) {
+          var items = [];
+          while (cursor.index < tokens.length && tokens[cursor.index].level === level + 1 && tokens[cursor.index].text !== "---") {
+            items.push(tokens[cursor.index].text);
+            cursor.index++;
+          }
+          value[field.path] = items;
+        } else {
+          value[field.path] = rest;
+        }
+        continue;
+      }
+      if (listByLabel[label]) {
+        if (seen[label]) break;
+        seen[label] = true;
+        cursor.index++;
+        var listNode = listByLabel[label];
+        var array = [];
+        while (cursor.index < tokens.length && tokens[cursor.index].level === level + 1) {
+          if (tokens[cursor.index].text === "---") { cursor.index++; continue; }
+          var before = cursor.index;
+          var parsed = legendParseObject(listNode.item, tokens, cursor, level + 1, {});
+          if (parsed.error) return parsed;
+          if (cursor.index === before) break;
+          array.push(parsed.value);
+        }
+        value[listNode.list] = array;
+        continue;
+      }
+      return { error: "第 " + token.line + " 行：這個區塊沒有「" + label + "」欄位" };
+    }
+    return { value: value };
+  }
+
+  function legendParseBlock(node, text) {
+    var tokenized = legendTokenize(text);
+    if (tokenized.error) return tokenized;
+    var cursor = { index: 0 };
+    var parsed = legendParseObject(node, tokenized.tokens, cursor, 0, {});
+    if (parsed.error) return parsed;
+    if (cursor.index < tokenized.tokens.length) {
+      return { error: "第 " + tokenized.tokens[cursor.index].line + " 行：多出來的內容" };
+    }
+    return { value: parsed.value };
+  }
+
+  function handleLegendBlock(input) {
+    var blockId = input.getAttribute("data-block");
+    var dataKey = input.getAttribute("data-data-key");
+    var groupIndex = Number(input.getAttribute("data-group"));
+    var page = state.data.legend && state.data.legend[dataKey];
+    if (!blockId || !page) return;
+    var group = LEGEND_SCHEMA[dataKey].groups[groupIndex];
+    var text = input.value;
+    state.legendRaw[blockId] = text;
+    var slot = document.querySelector('[data-legend-error="' + blockId + '"]');
+    var parsed = legendParseBlock(group, text);
+    if (parsed.error) {
+      state.legendErrors[blockId] = parsed.error;
+      if (slot) { slot.textContent = parsed.error; slot.hidden = false; }
+    } else {
+      delete state.legendErrors[blockId];
+      if (slot) { slot.textContent = ""; slot.hidden = true; }
+      Object.keys(parsed.value).forEach(function (key) { page[key] = parsed.value[key]; });
+      legendSchedulePreview();
+    }
+    markDirty();
+  }
+
+  var LEGEND_PAGE_MAP = {
+    index: { fileKey: "legendIndex", path: "legend/index.html", selectors: [".hero", "#links", "#downloads", "#usage", "#audio"] },
+    boxes: { fileKey: "legendBoxes", path: "legend/boxes.html", selectors: [".hero", ".hero", "#info", "#get", "#box1", "#box2", "#core-event", "#time-event"] },
+    flips: { fileKey: "legendFlips", path: "legend/flips.html", selectors: [".hero", "#ways", "#howto"] },
+    rules: { fileKey: "legendRules", path: "legend/rules.html", selectors: [".hero", "#ch1"] }
+  };
+
+  function legendLabels(node, out) {
+    var list = out || [];
+    (node.fields || []).concat(node.lists || []).forEach(function (field) {
+      if (field.list) legendLabels(field.item, list);
+      else if (list.indexOf(field.label) < 0) list.push(field.label);
+    });
+    return list;
+  }
+
+  function legendPreviewHtml(dataKey, groupIndex) {
+    var meta = LEGEND_PAGE_MAP[dataKey];
+    var page = state.data.legend && state.data.legend[dataKey];
+    var empty = '<!doctype html><meta charset="utf-8"><p style="font-family:system-ui;padding:24px;color:#6b4e5e">目前沒有可預覽的內容。</p>';
+    if (!meta || !page || !Legend) return empty;
+    var files = {};
+    files[meta.fileKey] = state.files[meta.fileKey];
+    var payload = {};
+    payload[dataKey] = page;
+    var built = "";
+    try { built = Legend.build(files, payload)[meta.fileKey] || ""; } catch (error) { built = ""; }
+    if (!built) return '<!doctype html><meta charset="utf-8"><p style="font-family:system-ui;padding:24px;color:#be123c">預覽失敗：前台頁面可能缺少 AUTO 標記。</p>';
+    var selector = meta.selectors[groupIndex] || ".hero";
+    var highlight = selector + " { outline: 3px solid #0f766e !important; outline-offset: 6px !important; scroll-margin-top: 96px !important; }";
+    var script = 'window.addEventListener("load", function () { var el = document.querySelector("' + selector + '"); if (el) el.scrollIntoView({ block: "start" }); });';
+    return built
+      .replace("<head>", '<head>\n  <base href="../legend/">')
+      .replace("</body>", "<style>" + highlight + "</style><scr" + "ipt>" + script + "</scr" + "ipt></body>");
+  }
+
+  function legendMountPreview() {
+    var frame = document.querySelector("#legendPreview");
+    if (!frame) return;
+    var parts = String(state.legendActive || "").split(":");
+    if (parts.length < 3) return;
+    frame.srcdoc = legendPreviewHtml(parts[1], Number(parts[2]));
+  }
+
+  function legendSchedulePreview() {
+    clearTimeout(legendPreviewTimer);
+    legendPreviewTimer = setTimeout(legendMountPreview, 350);
+  }
+
+  function handleLegendClick(button) {
+    var open = button.getAttribute("data-legend-open");
+    if (open) {
+      if (state.legendActive !== open) {
+        state.legendActive = open;
+        renderPanels();
+      }
+      return true;
+    }
+    var label = button.getAttribute("data-legend-label");
+    if (label) {
+      var field = document.querySelector("#legendText");
+      if (!field) return true;
+      var text = String(field.value || "");
+      var start = typeof field.selectionStart === "number" ? field.selectionStart : text.length;
+      var stop = typeof field.selectionEnd === "number" ? field.selectionEnd : start;
+      field.value = text.slice(0, start) + label + "：" + text.slice(stop);
+      field.focus();
+      handleLegendBlock(field);
+      return true;
+    }
+    var reset = button.getAttribute("data-legend-reset");
+    if (reset) {
+      delete state.legendRaw[reset];
+      delete state.legendErrors[reset];
+      renderPanels();
+      return true;
+    }
+    return false;
+  }
+
+  function renderLegendPanel() {
+    var ids = [];
+    Object.keys(LEGEND_SCHEMA).forEach(function (dataKey) {
+      LEGEND_SCHEMA[dataKey].groups.forEach(function (group, index) {
+        ids.push("legend:" + dataKey + ":" + index);
+      });
+    });
+    if (ids.indexOf(state.legendActive) < 0) state.legendActive = ids[0] || "";
+
+    var toc = "";
+    Object.keys(LEGEND_SCHEMA).forEach(function (dataKey) {
+      var schema = LEGEND_SCHEMA[dataKey];
+      toc += '<div class="legend-toc-group"><h4>' + esc(schema.label.replace(/（.*?）/, "")) + "</h4>";
+      schema.groups.forEach(function (group, index) {
+        var blockId = "legend:" + dataKey + ":" + index;
+        var hasError = !!state.legendErrors[blockId];
+        toc += '<button type="button" data-legend-open="' + blockId + '"' +
+          (blockId === state.legendActive ? ' class="active"' : "") + ">" +
+          (hasError ? '<span class="dot" title="格式有誤"></span>' : "") +
+          esc(group.title) + "</button>";
+      });
+      toc += "</div>";
+    });
+
+    var parts = state.legendActive.split(":");
+    var dataKey = parts[1];
+    var groupIndex = Number(parts[2]);
+    var schema = LEGEND_SCHEMA[dataKey];
+    var group = schema && schema.groups[groupIndex];
+    var page = state.data.legend && state.data.legend[dataKey];
+    var blockId = state.legendActive;
+    var body = "";
+
+    if (!page || !group) {
+      body = '<div class="item"><p class="error">讀不到設定：頁面可能沒有 AUTO 標記（舊版），請先更新 legend/ 頁面後按「重新載入」。</p></div>';
+    } else {
+      var text = state.legendRaw[blockId] != null ? state.legendRaw[blockId] : legendSerialize(group, page, 0);
+      var rows = Math.min(30, Math.max(8, String(text).split("\n").length + 1));
+      var errorText = state.legendErrors[blockId] || "";
+      var chips = legendLabels(group).map(function (label) {
+        return '<button type="button" class="legend-chip" data-legend-label="' + esc(label) + '">' + esc(label) + "</button>";
+      }).join("");
+      body = '<div class="legend-editor">' +
+        '<div class="legend-editor-head"><h3>' + esc(group.title) + '</h3><div class="legend-editor-actions">' +
+        '<button class="btn small ghost" type="button" data-legend-reset="' + blockId + '">重新整理</button>' +
+        '<a class="btn small ghost" href="../' + LEGEND_PAGE_MAP[dataKey].path + '" target="_blank" rel="noopener">開啟頁面</a>' +
+        "</div></div>" +
+        '<p class="hint">點下面任何欄位名稱，會把「欄位：」插入到游標位置。清單縮排 4 個空白、項目之間用 <code>---</code> 分隔。</p>' +
+        '<div class="legend-chips">' + chips + "</div>" +
+        '<textarea id="legendText" class="legend-text" rows="' + rows + '" spellcheck="false" data-block="' + blockId +
+        '" data-data-key="' + dataKey + '" data-group="' + groupIndex + '">' + esc(text) + "</textarea>" +
+        '<p class="error" data-legend-error="' + blockId + '"' + (errorText ? "" : " hidden") + ">" + esc(errorText) + "</p>" +
+        "</div>" +
+        '<div class="legend-preview"><div class="legend-preview-bar"><span>即時預覽（綠框＝目前區塊）</span>' +
+        '<a href="../' + LEGEND_PAGE_MAP[dataKey].path + '" target="_blank" rel="noopener">開啟整頁</a></div>' +
+        '<iframe id="legendPreview" title="Legend 即時預覽" loading="lazy"></iframe></div>';
+    }
+
+    return '<div class="panel-head"><div><h2>Legend 伺服器</h2><p>左邊選區塊，右邊直接改內容，下方即時預覽。</p></div></div>' +
+      '<div class="legend-layout"><aside class="legend-toc" aria-label="Legend 區塊">' + toc + "</aside>" +
+      '<div class="legend-main">' + body + "</div></div>";
+  }
+
   function renderPanels() {
     if (!state.data) return;
     if (canEdit("updates")) $('[data-panel="updates"]').innerHTML = renderUpdatesPanel();
     if (canEdit("posts")) $('[data-panel="posts"]').innerHTML = renderPostsPanel();
     if (canEdit("group")) $('[data-panel="group"]').innerHTML = renderGroupPanel();
+    if (canEdit("legend")) {
+      var legendPanel = $('[data-panel="legend"]');
+      if (legendPanel) {
+        legendPanel.innerHTML = renderLegendPanel();
+        legendMountPreview();
+      }
+    }
     el.countUpdates.textContent = String(state.data.updates.length);
     el.countPosts.textContent = String(state.data.posts.length);
     el.countGroup.textContent = String(state.data.group.main.length + state.data.group.sub.length + (state.data.group.posts || []).length);
+    if (el.countLegend) {
+      var legendReady = 0;
+      if (state.data.legend) {
+        Object.keys(state.data.legend).forEach(function (key) { if (state.data.legend[key]) legendReady += 1; });
+      }
+      el.countLegend.textContent = String(legendReady);
+    }
   }
 
   function activateTab(name) {
@@ -809,6 +1391,11 @@
   }
 
   function handleField(event) {
+    var block = event.target.getAttribute && event.target.getAttribute("data-block");
+    if (block) {
+      handleLegendBlock(event.target);
+      return;
+    }
     var path = event.target.getAttribute && event.target.getAttribute("data-path");
     if (!path) return;
     setPath(state.data, path, event.target.value);
@@ -831,7 +1418,11 @@
 
   function handleAction(event) {
     var button = event.target.closest("[data-action]");
-    if (!button) return;
+    if (!button) {
+      var legendButton = event.target.closest("[data-legend-open], [data-legend-label], [data-legend-reset]");
+      if (legendButton) handleLegendClick(legendButton);
+      return;
+    }
     var action = button.getAttribute("data-action");
     var listName = button.getAttribute("data-list");
     var index = Number(button.getAttribute("data-index"));
@@ -936,10 +1527,18 @@
       toast("目前沒有變更。", "ok");
       return;
     }
+    var legendErrorKey = Object.keys(state.legendErrors || {}).filter(function (key) { return state.legendErrors[key]; })[0];
+    if (legendErrorKey) {
+      toast("Legend 區塊格式有誤：" + state.legendErrors[legendErrorKey], "error", 7000);
+      return;
+    }
     var allowed = allowedSections();
-    var errors = Core.validate(state.data).filter(function (message) {
+    var allErrors = Core.validate(state.data);
+    if (Legend && state.data.legend) allErrors = allErrors.concat(Legend.validate(state.data.legend));
+    var errors = allErrors.filter(function (message) {
       if (message.indexOf("更新歷程") === 0) return allowed.indexOf("updates") >= 0;
       if (message.indexOf("部落格") === 0) return allowed.indexOf("posts") >= 0;
+      if (message.indexOf("Legend") === 0) return allowed.indexOf("legend") >= 0;
       return allowed.indexOf("group") >= 0;
     });
     if (errors.length) {
@@ -966,7 +1565,7 @@
   }
 
   async function publishDirect() {
-    var built = Core.buildAll(state.files, state.data);
+    var built = buildAllFiles();
     var keys = changedKeys(built);
     var uploadPaths = referencedUploads(built);
     if (!keys.length && !uploadPaths.length) {
@@ -998,7 +1597,7 @@
   }
 
   async function publishPullRequest() {
-    var built = Core.buildAll(state.files, state.data);
+    var built = buildAllFiles();
     var keys = changedKeys(built);
     var uploadPaths = referencedUploads(built);
     if (!keys.length && !uploadPaths.length) {
@@ -1087,7 +1686,7 @@
   }
 
   async function saveLocal() {
-    var built = Core.buildAll(state.files, state.data);
+    var built = buildAllFiles();
     var keys = changedKeys(built);
     var uploadPaths = referencedUploads(built);
     if (!keys.length && !uploadPaths.length) {
@@ -1156,6 +1755,8 @@
     }
     state.data = clone(state.loaded);
     state.dirty = false;
+    state.legendRaw = {};
+    state.legendErrors = {};
     clearUploads();
     renderPanels();
     updateSavebar();
@@ -1210,6 +1811,7 @@
     el.countUpdates = $("#countUpdates");
     el.countPosts = $("#countPosts");
     el.countGroup = $("#countGroup");
+    el.countLegend = $("#countLegend");
 
     el.connectBtn.addEventListener("click", connectGitHub);
     el.verifyBtn.addEventListener("click", verifyToken);
@@ -1268,7 +1870,7 @@
 
     var params = new URLSearchParams(location.search);
     var tab = params.get("tab");
-    if (tab === "updates" || tab === "posts" || tab === "group") state.initialTab = tab;
+    if (tab === "updates" || tab === "posts" || tab === "group" || tab === "legend") state.initialTab = tab;
 
     el.roleInput.disabled = true;
     el.publishInput.disabled = true;
