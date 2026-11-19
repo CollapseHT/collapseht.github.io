@@ -3,4 +3,4 @@ Allow: /
 Disallow: /private/
 Disallow: /admin/
 
-Sitemap: https://collapseht.github.io/sitemap.xml
+Sitemap: https://collapseht.org/sitemap.xml

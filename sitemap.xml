@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://collapseht.github.io/</loc>
+    <loc>https://collapseht.org/</loc>
     <lastmod>2026-11-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://collapseht.github.io/update.html</loc>
+    <loc>https://collapseht.org/update.html</loc>
     <lastmod>2026-11-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://collapseht.github.io/blog.html</loc>
+    <loc>https://collapseht.org/blog.html</loc>
     <lastmod>2026-11-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://collapseht.github.io/game.html</loc>
+    <loc>https://collapseht.org/game.html</loc>
     <lastmod>2026-11-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://collapseht.github.io/group.html</loc>
+    <loc>https://collapseht.org/group.html</loc>
     <lastmod>2026-11-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://collapseht.github.io/legend/</loc>
+    <loc>https://collapseht.org/legend/</loc>
     <lastmod>2026-11-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://collapseht.github.io/legend/boxes.html</loc>
+    <loc>https://collapseht.org/legend/boxes.html</loc>
     <lastmod>2026-11-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://collapseht.github.io/legend/flips.html</loc>
+    <loc>https://collapseht.org/legend/flips.html</loc>
     <lastmod>2026-11-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://collapseht.github.io/legend/rules.html</loc>
+    <loc>https://collapseht.org/legend/rules.html</loc>
     <lastmod>2026-11-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
