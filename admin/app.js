@@ -45,7 +45,7 @@
     legend: { label: "Legend 編輯", sections: ["legend"] }
   };
   /* 後端（Cloudflare Worker）：負責帳密登入與代打 GitHub API */
-  var API_BASE = (typeof window !== "undefined" && window.__ADMIN_API_BASE__) || "https://api.collapseht.org";
+  var API_BASE = (typeof window !== "undefined" && window.__ADMIN_API_BASE__) || "https://admin-api.collapseht.org";
   var GH_PROXY = API_BASE + "/gh";
   var AUTH_BASE = API_BASE + "/auth";
   var POST_ICONS = [
