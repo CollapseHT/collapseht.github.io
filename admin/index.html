@@ -42,10 +42,10 @@
             GitHub Pages 大約 1 分鐘後更新前台。
           </p>
 
-          <h2>連線到 GitHub</h2>
+          <h2>登入後台</h2>
           <p class="hint">
-            需要一組有 <strong>Contents: Read and write</strong> 權限的 Fine-grained token。
-            權杖只會存在這台裝置的 localStorage，不會寫進網站，也不會出現在網址或畫面上。
+            用管理員帳號密碼登入。驗證與 GitHub 提交都由 Cloudflare Worker 代勞，
+            <strong>瀏覽器裡不會有任何 GitHub token</strong>。
           </p>
 
           <div class="grid-2" style="margin-top: 14px">
@@ -59,10 +59,16 @@
             </label>
           </div>
 
-          <label>
-            <span>GitHub token</span>
-            <input id="tokenInput" type="password" placeholder="github_pat_..." spellcheck="false" autocomplete="off" />
-          </label>
+          <div class="grid-2">
+            <label>
+              <span>帳號</span>
+              <input id="userInput" type="text" placeholder="管理員帳號" spellcheck="false" autocomplete="username" />
+            </label>
+            <label>
+              <span>密碼</span>
+              <input id="passwordInput" type="password" placeholder="••••••••" autocomplete="current-password" />
+            </label>
+          </div>
 
           <div class="grid-2">
             <label>
@@ -85,38 +91,37 @@
             </label>
           </div>
           <p class="hint" id="roleHint">
-            請先貼上 token 並按「驗證 Token」。系統會依 GitHub 權限自動鎖定；只有擁有者可以選權限。
+            角色由帳號決定；登入後系統會自動確認你對這個 repo 的寫入權限。
           </p>
 
           <div class="row">
-            <button class="btn ghost" id="verifyBtn" type="button">驗證 Token</button>
+            <button class="btn ghost" id="verifyBtn" type="button">登入</button>
             <button class="btn primary" id="connectBtn" type="button" disabled>載入後台</button>
             <button class="btn ghost" id="localBtn" type="button" hidden>本機檔案模式</button>
-            <span class="hint" id="setupHint">先驗證 token，確認身分後再按「載入後台」。</span>
+            <span class="hint" id="setupHint">先登入，確認身分後再按「載入後台」。</span>
           </div>
           <div class="verify-result" id="verifyResult" hidden></div>
           <p class="error" id="setupError" hidden></p>
         </div>
 
         <details class="card">
-          <summary>如何取得 GitHub 權杖？（第一次設定看這裡）</summary>
+          <summary>後台是怎麼驗證的？（第一次設定看這裡）</summary>
+          <p class="hint">
+            這個頁面是靜態檔，真正的登入與提交由 Cloudflare Worker <code>api.collapseht.org</code> 處理：
+          </p>
           <ol>
-            <li>登入 GitHub，點右上角頭像 → <strong>Settings</strong>。</li>
-            <li>左側最下方 <strong>Developer settings</strong> → <strong>Personal access tokens</strong> → <strong>Fine-grained tokens</strong>。</li>
-            <li>按 <strong>Generate new token</strong>，名稱填 <code>mogumogu-admin</code>，Expiration 選 90 天。</li>
-            <li>Repository access 選 <strong>Only select repositories</strong>，只勾 <code>CollapseHT/collapseht.github.io</code>。</li>
-            <li>Repository permissions → <strong>Contents</strong> 設為 <strong>Read and write</strong>（Metadata 會自動變 Read）。</li>
-            <li>如果要用「建立 Pull Request」：<strong>Pull requests</strong> 也設為 <strong>Read and write</strong>。</li>
-            <li>朋友要先被邀請成這個 repo 的 collaborator（Settings → Collaborators，權限選 <strong>Write</strong>，不要 Admin），才能用自己的 token 寫入。</li>
-            <li>Generate token，複製 <code>github_pat_...</code> 貼到上面的欄位。</li>
+            <li>在這裡輸入帳號密碼 → Worker 用 PBKDF2 驗證，通過後發一張 <strong>HttpOnly</strong> 的簽章 cookie（7 天）。</li>
+            <li>存檔時前端只把「要打哪個 GitHub API」交給 Worker，由 Worker 帶著伺服器端的 token 去 commit。</li>
+            <li><strong>瀏覽器裡沒有任何 GitHub token</strong>，打開 DevTools 也拿不到；外流風險從「每個編輯者手上都有一把鑰匙」變成「只有 Cloudflare 上有」。</li>
           </ol>
           <p class="hint" style="margin-top: 10px">
-            如果權杖外流，隨時回到 GitHub 撤銷即可；後台只會用它讀寫這個 repo 的檔案。
+            要新增或重設帳號：在 <code>cloudflare-admin</code> 專案執行
+            <code>node scripts/hash-password.mjs "新密碼"</code>，把輸出的雜湊寫進 D1 的 <code>users</code> 表。
           </p>
           <p class="hint">
             <strong>要讓「只能編輯某一區」真正有效</strong>，請到 GitHub → Settings → Rules → Rulesets（或 Branches），
             對 <code>main</code> 開啟「Require a pull request before merging」。
-            這樣朋友就算繞過後台直接打 API，也只能建立 PR，不能直接改 main。
+            這樣就算有人繞過後台直接打 API，也只能建立 PR，不能直接改 main。
           </p>
         </details>
 
@@ -125,7 +130,7 @@
           <p class="hint">
             在本機用 <code>http://localhost</code> 開啟後台時，可以選「本機檔案模式」：
             直接讀取同資料夾的前台 HTML（update、blog、group 與 legend/），改完用瀏覽器寫回檔案（或下載這些 HTML），
-            不需要 token，適合先在本機預覽、確認版面後再自行 push。
+            不需要登入，適合先在本機預覽、確認版面後再自行 push。
           </p>
           <p class="hint">
             最快的啟動方式：在 <code>collapseht.github.io</code> 資料夾執行

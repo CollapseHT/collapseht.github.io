@@ -1,10 +1,14 @@
 # 子彈の貓窩 ‧ 內容管理後台
 
-後台是**純靜態**頁面，不需要資料庫或後端伺服器。它有兩種模式：
+> **2026-11 更新**：後台已改成「帳號密碼登入」。
+> 驗證與 GitHub 提交由 Cloudflare Worker（`api.collapseht.org`）處理，瀏覽器裡不再存放任何 GitHub token。
+> Worker 的原始碼與部署說明在 `cloudflare-admin/`。
+
+後台頁面本身仍是**純靜態**，但「登入」與「存檔」會呼叫 Worker。它有兩種模式：
 
 | 模式 | 適合 | 儲存方式 |
 | --- | --- | --- |
-| GitHub 模式 | 平常在線上管理 | 用 GitHub token 直接 commit 到 repo，GitHub Pages 約 1 分鐘後更新 |
+| 線上模式 | 平常在線上管理 | 登入 Worker → 由 Worker 帶著伺服器端 token commit，GitHub Pages 約 1 分鐘後更新 |
 | 本機檔案模式 | 先在本機改、確認版面 | 直接寫回本機 HTML（Chrome / Edge），或下載三個 HTML 覆蓋 |
 
 前台仍然是原本的靜態 HTML，沒有改成 JS 渲染，所以 SEO、載入速度與原本一模一樣。

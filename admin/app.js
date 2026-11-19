@@ -44,7 +44,10 @@
     updates: { label: "更新歷程編輯", sections: ["updates"] },
     legend: { label: "Legend 編輯", sections: ["legend"] }
   };
-  var API_BASE = (typeof window !== "undefined" && window.__ADMIN_API_BASE__) || "https://api.github.com";
+  /* 後端（Cloudflare Worker）：負責帳密登入與代打 GitHub API */
+  var API_BASE = (typeof window !== "undefined" && window.__ADMIN_API_BASE__) || "https://api.collapseht.org";
+  var GH_PROXY = API_BASE + "/gh";
+  var AUTH_BASE = API_BASE + "/auth";
   var POST_ICONS = [
     "laptop-code", "code", "gamepad", "music", "book", "camera", "film", "palette",
     "server", "database", "terminal", "bug", "wrench", "rocket", "star", "heart",
@@ -177,26 +180,25 @@
 
   /* ---------------- GitHub API ---------------- */
   async function gh(method, path, body) {
-    var headers = {
-      Accept: "application/vnd.github+json",
-      Authorization: "Bearer " + state.token
-    };
-    if (body) headers["Content-Type"] = "application/json";
-    var response = await fetch(API_BASE + path, {
-      method: method,
-      headers: headers,
-      body: body ? JSON.stringify(body) : undefined
+    var response = await fetch(GH_PROXY, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ method: method, path: path, body: body || null })
     });
-    var text = await response.text();
-    var data = null;
-    if (text) {
-      try { data = JSON.parse(text); } catch (e) { data = null; }
+    if (response.status === 401) {
+      throw makeApiError(401, "登入已過期，請重新登入。", null);
     }
-    if (!response.ok) {
-      throw makeApiError(response.status, data && data.message ? data.message : ("HTTP " + response.status), data);
+    var payload = null;
+    try { payload = await response.json(); } catch (e) { payload = null; }
+    if (!payload || payload.ok !== true) {
+      var status = payload && payload.status ? payload.status : response.status;
+      var message = payload && payload.data && payload.data.message ? payload.data.message : ("HTTP " + status);
+      throw makeApiError(status, message, payload && payload.data);
     }
-    return data;
+    return payload.data;
   }
+
 
   function b64decode(b64) {
     var binary = atob(String(b64 || "").replace(/\s/g, ""));
@@ -246,7 +248,6 @@
   function writeConfig() {
     try {
       localStorage.setItem(LS_KEY, JSON.stringify({
-        token: state.token,
         owner: state.owner,
         repo: state.repo,
         branch: state.branch,
@@ -316,9 +317,10 @@
     el.setupHint.textContent = "";
     syncRoleUI();
 
-    var token = el.tokenInput.value.trim();
-    if (!token) {
-      showError("請先貼上 GitHub token。");
+    var username = el.userInput.value.trim();
+    var password = el.passwordInput.value;
+    if (!username || !password) {
+      showError("請輸入帳號與密碼。");
       return;
     }
     var target;
@@ -329,9 +331,21 @@
       return;
     }
     var branch = el.branchInput.value.trim() || "main";
-    state.token = token;
-    setBusy(true, "驗證權杖與權限…");
+    setBusy(true, "登入中…");
     try {
+      var loginRes = await fetch(AUTH_BASE + "/login", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: username, password: password })
+      });
+      var loginData = null;
+      try { loginData = await loginRes.json(); } catch (e) { loginData = null; }
+      if (!loginRes.ok || !loginData || !loginData.ok) {
+        throw new Error((loginData && loginData.error) || "登入失敗，請確認帳號密碼。");
+      }
+      el.passwordInput.value = "";
+      state.user = loginData.user;
       var me = await gh("GET", "/user");
       var info = await gh("GET", "/repos/" + target.owner + "/" + target.repo);
       await gh("GET", "/repos/" + target.owner + "/" + target.repo + "/git/ref/heads/" + encodeURIComponent(branch));
@@ -346,7 +360,6 @@
       var permLabel = perms.admin ? "Admin" : perms.maintain ? "Maintain" : "Write";
 
       state.verified = {
-        token: token,
         owner: target.owner,
         repo: target.repo,
         branch: branch,
@@ -379,7 +392,7 @@
       el.setupHint.textContent = isOwner
         ? "驗證成功，選好權限後按「載入後台」。"
         : "驗證成功，權限已鎖定；按「載入後台」進入。";
-      toast("Token 驗證成功。", "ok");
+      toast("登入成功。", "ok");
     } catch (error) {
       state.verified = null;
       el.connectBtn.disabled = true;
@@ -398,18 +411,15 @@
     try {
       showError("");
       var target = parseRepoInput();
-      var token = el.tokenInput.value.trim();
       var branch = el.branchInput.value.trim() || "main";
-      if (!token) throw new Error("請先貼上 GitHub token。");
-      if (!state.verified || state.verified.token !== token ||
+      if (!state.verified ||
           state.verified.owner !== target.owner || state.verified.repo !== target.repo ||
           state.verified.branch !== branch) {
-        throw new Error("請先按「驗證 Token」，確認身分與權限後再載入。");
+        throw new Error("請先按「登入」，確認身分與權限後再載入。");
       }
       var role = state.verified.isOwner ? el.roleInput.value : "group";
       if (!ROLES[role]) throw new Error("權限模式不正確。");
       state.mode = "github";
-      state.token = token;
       state.owner = target.owner;
       state.repo = target.repo;
       state.branch = branch;
@@ -1769,12 +1779,46 @@
     else await connectGitHub();
   }
 
-  function logout() {
+  async function logout() {
     if (state.dirty && !window.confirm("有未儲存的變更，確定要登出嗎？")) return;
     clearConfig();
-    state.token = "";
+    try {
+      await fetch(AUTH_BASE + "/logout", { method: "POST", credentials: "include" });
+    } catch (e) { /* 忽略 */ }
     clearUploads();
     location.reload();
+  }
+
+  /* 有 session cookie 就直接恢復登入狀態，不用每次打帳密 */
+  async function restoreSession() {
+    try {
+      var res = await fetch(AUTH_BASE + "/me", { credentials: "include" });
+      if (!res.ok) return;
+      var data = await res.json();
+      if (!data || !data.ok || !data.user) return;
+      state.user = data.user;
+      var config = readConfig();
+      if (config && config.owner && config.repo) {
+        state.verified = {
+          owner: config.owner,
+          repo: config.repo,
+          branch: config.branch || "main",
+          login: data.user.username,
+          isOwner: true
+        };
+        el.roleInput.disabled = false;
+        el.publishInput.disabled = false;
+        state.role = el.roleInput.value;
+        state.publishMode = el.publishInput.value;
+        syncRoleUI();
+        el.connectBtn.disabled = false;
+        el.verifyResult.innerHTML = "✅ 已登入 <strong>" + esc(data.user.username) + "</strong>；按「載入後台」即可。";
+        el.verifyResult.hidden = false;
+        el.setupHint.textContent = "工作階段仍在，直接按「載入後台」。";
+      } else {
+        el.setupHint.textContent = "已登入為 " + data.user.username + "；確認 repo 後按「載入後台」。";
+      }
+    } catch (e) { /* 忽略 */ }
   }
 
   /* ---------------- 綁定 ---------------- */
@@ -1783,7 +1827,8 @@
     el.editorView = $("#editorView");
     el.repoInput = $("#repoInput");
     el.branchInput = $("#branchInput");
-    el.tokenInput = $("#tokenInput");
+    el.userInput = $("#userInput");
+    el.passwordInput = $("#passwordInput");
     el.roleInput = $("#roleInput");
     el.publishInput = $("#publishInput");
     el.roleHint = $("#roleHint");
@@ -1821,14 +1866,14 @@
     el.reloadBtn.addEventListener("click", reload);
     el.logoutBtn.addEventListener("click", logout);
     el.roleInput.addEventListener("change", syncRoleUI);
-    el.tokenInput.addEventListener("keydown", function (event) {
+    el.passwordInput.addEventListener("keydown", function (event) {
       if (event.key === "Enter") {
         event.preventDefault();
         if (state.verified) connectGitHub();
         else verifyToken();
       }
     });
-    [el.tokenInput, el.repoInput, el.branchInput].forEach(function (input) {
+    [el.userInput, el.repoInput, el.branchInput].forEach(function (input) {
       input.addEventListener("input", resetVerification);
     });
 
@@ -1878,27 +1923,25 @@
     el.verifyResult.hidden = true;
 
     var config = readConfig();
-    if (config && config.token) {
-      state.token = config.token;
+    if (config && config.owner && config.repo) {
       state.owner = config.owner;
       state.repo = config.repo;
       state.branch = config.branch || "main";
       el.repoInput.value = config.owner + "/" + config.repo;
       el.branchInput.value = state.branch;
-      el.tokenInput.value = config.token;
       if (ROLES[config.role]) el.roleInput.value = config.role;
       if (config.publishMode === "pr" || config.publishMode === "direct") {
         el.publishInput.value = config.publishMode;
       }
-      el.setupHint.textContent = "已帶入上次的 repo 與 token；請按「驗證 Token」。";
     }
+    restoreSession();
 
     syncRoleUI();
 
     if (params.get("local") === "1" && isLocalEnv()) {
       connectLocal();
     } else if (isLocalEnv()) {
-      el.setupHint.textContent = "先驗證 token 再載入；也可以直接用「本機檔案模式」。";
+      el.setupHint.textContent = "先登入再載入；也可以直接用「本機檔案模式」。";
     }
   });
 })();
