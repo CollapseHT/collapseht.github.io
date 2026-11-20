@@ -78,7 +78,7 @@ const server = http.createServer((req, res) => {
 
 server.on("error", (error) => {
   if (error.code === "EADDRINUSE") {
-    console.error("Port " + port + " 已被占用，請改用 PORT=5174 node admin/serve.mjs");
+    console.error("Port " + port + " 已被占用，請改用 PORT=5174 node backend/serve.mjs");
   } else {
     console.error(error);
   }
@@ -88,6 +88,6 @@ server.on("error", (error) => {
 server.listen(port, host, () => {
   console.log("子彈の貓窩 ‧ 本機伺服器");
   console.log("前台：http://" + host + ":" + port + "/");
-  console.log("後台：http://" + host + ":" + port + "/admin/");
+  console.log("後台：http://" + host + ":" + port + "/backend/");
   console.log("（只綁定 127.0.0.1，僅本機可連線；Ctrl+C 停止）");
 });

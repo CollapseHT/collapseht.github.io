@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /private/
-Disallow: /admin/
+Disallow: /backend/
 
 Sitemap: https://collapseht.org/sitemap.xml

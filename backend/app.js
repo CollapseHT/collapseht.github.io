@@ -91,7 +91,7 @@
   var toastTimer = null;
 
   if (!Core) {
-    document.body.innerHTML = '<p style="padding:30px;font-family:sans-serif">找不到 admin/core.js，請確認檔案存在。</p>';
+    document.body.innerHTML = '<p style="padding:30px;font-family:sans-serif">找不到 backend/core.js，請確認檔案存在。</p>';
     return;
   }
 
@@ -449,7 +449,7 @@
     try {
       showError("");
       if (location.protocol === "file:") {
-        throw new Error("本機模式無法在 file:// 底下讀取檔案。請在 collapseht.github.io 資料夾執行「node admin/serve.mjs」，再開 http://127.0.0.1:5173/admin/");
+        throw new Error("本機模式無法在 file:// 底下讀取檔案。請在 collapseht.github.io 資料夾執行「node backend/serve.mjs」，再開 http://127.0.0.1:5173/admin/");
       }
       setBusy(true, "讀取本機前台檔案…");
       var names = Object.keys(FILES);

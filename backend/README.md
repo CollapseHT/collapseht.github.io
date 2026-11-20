@@ -19,12 +19,12 @@
 
 在 collapseht.github.io 資料夾執行：
 
-    node admin/serve.mjs
+    node backend/serve.mjs
 
 然後開：
 
 - 前台：http://127.0.0.1:5173/
-- 後台：http://127.0.0.1:5173/admin/
+- 後台：http://127.0.0.1:5173/backend/
 
 進入後台後按「本機檔案模式」，會讀取同一資料夾的 update.html、blog.html、group.html 與 legend/*.html。
 改完按「儲存檔案」：
@@ -33,7 +33,7 @@
 - 其他瀏覽器：會下載有改到的 HTML（含 legend/ 底下的頁面），手動覆蓋原檔。
 
 > serve.mjs 只綁定 127.0.0.1，只有這台電腦能連線，不會對外開放。
-> 如果 5173 被占用：PORT=5174 node admin/serve.mjs。
+> 如果 5173 被占用：PORT=5174 node backend/serve.mjs。
 
 ---
 
@@ -88,7 +88,7 @@
 | 部落格編輯 | 部落格 | 一律 PR |
 | 更新歷程編輯 | 更新歷程 | 一律 PR |
 
-朋友直接開 https://collapseht.github.io/admin/，貼上自己的 token，
+朋友直接開 https://collapseht.org/backend/，貼上自己的 token，
 按「驗證 Token」後會看到自己的帳號與 Write 權限，權限自動鎖定為「放浪團編輯」；
 再按「載入後台」即可。網址不需要加 ?role=group。
 儲存時後台會建立一個 branch 與 Pull Request，**不會直接寫 main**。
@@ -202,7 +202,7 @@
 | 401 | token 過期或打錯，重新產生 |
 | 403 | token 沒有 Contents: Read and write，或 API 次數用完 |
 | 422 / 409 | 遠端有新的 commit，按「重新載入」再儲存 |
-| 本機模式無法寫入 | 用 Chrome / Edge，並從 http://127.0.0.1:5173/admin/ 開啟；或改用下載檔案 |
+| 本機模式無法寫入 | 用 Chrome / Edge，並從 http://127.0.0.1:5173/backend/ 開啟；或改用下載檔案 |
 | 圖片破圖 | 路徑要相對網站根目錄，例如 group/xxx.jpg，不是 ../group/xxx.jpg |
 | 儲存後前台沒變 | GitHub Pages 需要約 1 分鐘；可按 Ctrl+Shift+R 強制重新整理 |
 
