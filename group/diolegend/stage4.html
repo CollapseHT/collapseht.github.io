@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="img/t1.png">
+    <script src="js/tower4.js"></script>
+    <title>迪歐傳說</title>
+</head>
+
+<body onload="init()">
+    <center>
+            <audio id="audio" loop="loop">
+                <source id="amp3" src="audio/stage/stage3.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="audioact">
+                <source id="amp3act" src="" type="audio/mpeg">
+            </audio>
+        <canvas id="main" width="1200" height="800" style="border:1px solid #000000; position: relative;"></canvas><br>
+        <button id="s1" onclick="sh(1)" style="width:100px; height:40px;">第一關</button>
+        <button id="s2" onclick="sh(2)" style="width:100px; height:40px;" disabled>第二關</button>
+        <button id="s3" onclick="sh(3)" style="width:100px; height:40px;" disabled>第三關</button>
+        <button id="s4" onclick="sh(4)" style="width:100px; height:40px;" disabled>結局?</button>
+        <a href="creater.html"><button style="width:100px; height:40px;">開發團隊</button></a>
+        <table border="1" width="500" height="10" cellpadding="5"
+            style="border:ridge #000000;">
+				<tr>
+					<th colspan="2" style="color: black;font-size: 28px;"><div id="volume">遊戲音量: </div><button onclick="vol(2)" style="width:100px; height:40px;">小聲</a></button><button onclick="vol(1)" style="width:100px; height:40px;">大聲</a></button></th>
+				</tr>
+        </table>
+        <div id="status" style="color: white;"></div>
+        <div id="money" style="color: white;"></div>
+        <div id="msg" style="color: white;"></div>
+    </center>
+</body>
+
+</html>
